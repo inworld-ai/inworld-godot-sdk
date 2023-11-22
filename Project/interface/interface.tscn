@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://cesm2ftmwtcnp"]
+
+[ext_resource type="PackedScene" uid="uid://ditschkewt7ub" path="res://interface/text_input.tscn" id="1_3djxw"]
+[ext_resource type="Script" path="res://interface/interface.gd" id="1_pt2po"]
+[ext_resource type="PackedScene" uid="uid://ldhr6dpms0lt" path="res://interface/text_output.tscn" id="3_8p7bn"]
+
+[node name="Interface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pt2po")
+
+[node name="TextInput" parent="." instance=ExtResource("1_3djxw")]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_right = 0.0
+offset_left = 32.0
+offset_top = -64.0
+offset_right = 32.0
+offset_bottom = -64.0
+grow_horizontal = 1
+grow_vertical = 0
+
+[node name="TextOutput" parent="." instance=ExtResource("3_8p7bn")]
+custom_minimum_size = Vector2(0, 560)
+layout_mode = 1
+anchors_preset = 10
+anchor_bottom = 0.0
+grow_vertical = 1
+
+[connection signal="character_text" from="." to="TextOutput" method="_on_interface_character_text"]
+[connection signal="player_text" from="." to="TextOutput" method="_on_interface_player_text"]
+[connection signal="entered" from="TextInput" to="." method="_on_text_input_entered"]
