@@ -23,7 +23,7 @@
 bin
 
 # Inworld
-!Inworld/inworld-ndk/lib/*
+!Inworld/inworld-ndk/lib/Win64/*
 
 # curl
-!Inworld/Inworld/curl-7.55.1/lib/Win64/VS2015/libcurl_a.lib
+!Inworld/curl-7.55.1/lib/Win64/VS2015/libcurl_a.lib
