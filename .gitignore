@@ -1,0 +1,29 @@
+# Godot 4+ specific ignores
+.godot/
+.sconsign*.dblite
+
+# Binaries
+*.o
+*.os
+*.so
+*.obj
+*.bc
+*.pyc
+*.dblite
+*.pdb
+*.lib
+*.config
+*.creator
+*.creator.user
+*.files
+*.includes
+*.idb
+*.exp
+*.dll
+bin
+
+# Inworld
+!Inworld/inworld-ndk/lib/*
+
+# curl
+!Inworld/Inworld/curl-7.55.1/lib/Win64/VS2015/libcurl_a.lib
