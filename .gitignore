@@ -22,6 +22,9 @@
 *.dll
 bin
 
+# VSCode
+*.code-workspace
+
 # Inworld
 !Inworld/inworld-ndk/lib/Win64/*
 
