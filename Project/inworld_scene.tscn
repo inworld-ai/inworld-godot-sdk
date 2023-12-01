@@ -1,17 +1,24 @@
 [gd_scene load_steps=4 format=3 uid="uid://drem16al40jf4"]
 
-[ext_resource type="Script" path="res://InworldSession.gd" id="1_wrote"]
 [ext_resource type="PackedScene" uid="uid://cesm2ftmwtcnp" path="res://interface/interface.tscn" id="2_swbl7"]
+[ext_resource type="Script" path="res://InworldSession.gd" id="2_yrq8l"]
 
 [sub_resource type="Theme" id="Theme_oxc0t"]
 
 [node name="Root" type="Node"]
 
-[node name="InworldSession" type="InworldSession" parent="."]
-script = ExtResource("1_wrote")
-
-[node name="Interface" parent="." node_paths=PackedStringArray("inworld") instance=ExtResource("2_swbl7")]
+[node name="Interface" parent="." node_paths=PackedStringArray("inworld_character") instance=ExtResource("2_swbl7")]
 theme = SubResource("Theme_oxc0t")
-inworld = NodePath("../InworldSession")
+inworld_character = NodePath("../InworldCharacter")
 
-[connection signal="got_connected" from="InworldSession" to="InworldSession" method="_on_got_connected"]
+[node name="InworldSession" type="InworldSession" parent="."]
+scene = "workspaces/stardew-valley/characters/alex"
+auth = "R2FDaHMzNWxPQWZ6MnBhZHA0TEF1QXE0WHZCT1VEM3I6ajhVQkpWaTQ2OVNkWHhRM2EyckllZVlSZms3cHpLOTdkRlFjdkFIVUh2anRTbmhzR2RWdXB5a3UwNnBwWHhoMQ=="
+script = ExtResource("2_yrq8l")
+
+[node name="InworldCharacter" type="InworldCharacter" parent="." node_paths=PackedStringArray("session")]
+brain = "workspaces/stardew-valley/characters/alex"
+session = NodePath("../InworldSession")
+
+[connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
+[connection signal="text_event" from="InworldCharacter" to="Interface" method="_on_inworld_got_text"]
