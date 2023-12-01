@@ -12,9 +12,12 @@ theme = SubResource("Theme_oxc0t")
 inworld_character = NodePath("../InworldCharacter")
 
 [node name="InworldSession" type="InworldSession" parent="."]
+scene = "workspaces/stardew-valley/characters/alex"
+auth = "VnpzUzZ4cHh1YWU0RXo0YUZubWpmTHFaa3NQamtMakQ6VHlzTGZiYnFlZmFKRUJraXNZMVRPcndFcmY5V0Y2V0xpY0ZLNlFZVGFxVGlBWVpxWng4VWh0WUlqa0VsUnVhTQ=="
 script = ExtResource("2_yrq8l")
 
 [node name="InworldCharacter" type="InworldCharacter" parent="." node_paths=PackedStringArray("session")]
+brain = "workspaces/stardew-valley/characters/alex"
 session = NodePath("../InworldSession")
 
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
