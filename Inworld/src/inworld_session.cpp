@@ -2,7 +2,10 @@
 
 #include "inworld_packet_handler.h"
 
+#include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
@@ -35,9 +38,19 @@ void InworldSession::_bind_methods() {
 
 InworldSession::InworldSession() :
 		Node{}, scene{}, auth{}, established{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
+	Inworld::SdkInfo sdk_info{
+		"godot",
+		((String)Engine::get_singleton()->get_version_info()["string"]).utf8(),
+		"1.0.0",
+		OS::get_singleton()->get_name().utf8(),
+	};
+
+	UtilityFunctions::push_warning(String(sdk_info.Type.c_str()), __FUNCTION__, __FILE__, __LINE__);
+	UtilityFunctions::push_warning(String(sdk_info.Subtype.c_str()), __FUNCTION__, __FILE__, __LINE__);
+	UtilityFunctions::push_warning(String(sdk_info.Version.c_str()), __FUNCTION__, __FILE__, __LINE__);
+	UtilityFunctions::push_warning(String(sdk_info.OS.c_str()), __FUNCTION__, __FILE__, __LINE__);
 	client.InitClient(
-			"Godot",
-			"1.0.0",
+			sdk_info,
 			[this](Inworld::Client::ConnectionState p_connection_state) {
 				const InworldSession::ConnectionState connection_state = (InworldSession::ConnectionState)p_connection_state;
 				set_process(connection_state != ConnectionState::IDLE);

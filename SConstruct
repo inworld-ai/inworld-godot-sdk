@@ -23,8 +23,6 @@ sources = [
 
 if env["platform"] == "windows":
 
-    Default(env.Install('Project/bin', 'Inworld/inworld-ndk/lib/Win64/webrtc_aec_plugin.dll'))
-
     env.Append(LIBPATH=['Inworld/curl-7.55.1/lib/Win64/VS2015'])
     env.Append(LIBS=['libcurl_a.lib'])
 
@@ -34,13 +32,39 @@ if env["platform"] == "windows":
     env.Append(CPPPATH=['Inworld/inworld-ndk/include'])
 
     env.Append(LIBPATH=['Inworld/inworld-ndk/lib/Win64'])
-    env.Append(LIBS=['absl_bad_optional_access.lib','absl_status.lib','absl_time_zone.lib',
-    'libssl.lib','absl_base.lib','absl_statusor.lib','address_sorting.lib','re2.lib','absl_cord.lib',
-    'absl_str_format_internal.lib','cares.lib','upb.lib','absl_graphcycles_internal.lib',
-    'absl_strings.lib','gpr.lib','webrtc_aec_plugin.dll','absl_int128.lib','absl_strings_internal.lib',
-    'grpc.lib','webrtc_aec_plugin.dll.lib','absl_malloc_internal.lib','absl_symbolize.lib',
-    'grpc++.lib','zlibstatic.lib','absl_raw_logging_internal.lib','absl_synchronization.lib','InworldNDK.lib',
-    'absl_spinlock_wait.lib','absl_throw_delegate.lib','libcrypto.lib','absl_stacktrace.lib','absl_time.lib','libprotobuf.lib'])
+    env.Append(LIBS=[
+	'InworldNDK.lib',
+    'absl_bad_optional_access.lib',
+    'absl_base.lib',
+    'absl_cord.lib',
+    'absl_graphcycles_internal.lib',
+    'absl_int128.lib',
+    'absl_malloc_internal.lib',
+    'absl_raw_logging_internal.lib',
+    'absl_spinlock_wait.lib',
+    'absl_stacktrace.lib',
+    'absl_status.lib',
+    'absl_statusor.lib',
+    'absl_str_format_internal.lib',
+    'absl_strings.lib',
+    'absl_strings_internal.lib',
+    'absl_symbolize.lib',
+    'absl_synchronization.lib',
+    'absl_throw_delegate.lib',
+    'absl_time.lib',
+    'absl_time_zone.lib',
+    'address_sorting.lib',
+    'cares.lib',
+    'gpr.lib',
+    'grpc++.lib',
+    'grpc.lib',
+    'libcrypto.lib',
+    'libprotobuf.lib',
+    'libssl.lib',
+    're2.lib',
+    'upb.lib',
+    'zlibstatic.lib',
+	])
     library = env.SharedLibrary(
         "Project/bin/libinworld{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
