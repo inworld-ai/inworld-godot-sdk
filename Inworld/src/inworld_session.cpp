@@ -22,7 +22,7 @@ void InworldSession::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("stop"), &InworldSession::stop);
 
 	ClassDB::bind_method(D_METHOD("get_connection_state"), &InworldSession::get_connection_state);
-	ADD_SIGNAL(MethodInfo("connection_state_changed", PropertyInfo(Variant::INT, "connection_state", PROPERTY_HINT_ENUM, "Idle,Connecting,Connected,Failed,Paused,Disconnected,Reconnecting")));
+	ADD_SIGNAL(MethodInfo("connection_state_changed", PropertyInfo(Variant::INT, "connection_state")));
 
 	ClassDB::bind_method(D_METHOD("get_established"), &InworldSession::get_established);
 	ADD_SIGNAL(MethodInfo("established", PropertyInfo(Variant::BOOL, "established")));
@@ -40,15 +40,11 @@ InworldSession::InworldSession() :
 		Node{}, scene{}, auth{}, established{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
 	Inworld::SdkInfo sdk_info{
 		"godot",
-		((String)Engine::get_singleton()->get_version_info()["string"]).utf8(),
+		std::string(((String)Engine::get_singleton()->get_version_info()["string"]).utf8()),
 		"1.0.0",
-		OS::get_singleton()->get_name().utf8(),
+		std::string(OS::get_singleton()->get_name().utf8()),
 	};
 
-	UtilityFunctions::push_warning(String(sdk_info.Type.c_str()), __FUNCTION__, __FILE__, __LINE__);
-	UtilityFunctions::push_warning(String(sdk_info.Subtype.c_str()), __FUNCTION__, __FILE__, __LINE__);
-	UtilityFunctions::push_warning(String(sdk_info.Version.c_str()), __FUNCTION__, __FILE__, __LINE__);
-	UtilityFunctions::push_warning(String(sdk_info.OS.c_str()), __FUNCTION__, __FILE__, __LINE__);
 	client.InitClient(
 			sdk_info,
 			[this](Inworld::Client::ConnectionState p_connection_state) {
