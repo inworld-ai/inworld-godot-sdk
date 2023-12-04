@@ -28,6 +28,7 @@ public:
 
 	void send_text(String p_text);
 	void on_text_event(String p_text);
+	void on_audio_event(String p_data_chunk);
 
 private:
 	void bind_brain_to_session();

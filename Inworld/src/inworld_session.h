@@ -53,6 +53,9 @@ public:
 	void connect_text_events(String p_brain, const Callable &p_callable, uint32_t p_flags = 0);
 	void disconnect_text_events(String p_brain, const Callable &p_callable);
 
+	void connect_audio_events(String p_brain, const Callable &p_callable, uint32_t p_flags = 0);
+	void disconnect_audio_events(String p_brain, const Callable &p_callable);
+
 private:
 	void set_scene(String p_scene);
 	String get_scene() const;

@@ -19,6 +19,7 @@ public:
 
 public:
 	virtual void Visit(const Inworld::TextEvent &Event) override;
+	virtual void Visit(const Inworld::AudioDataEvent &Event) override;
 };
 
 } // namespace godot

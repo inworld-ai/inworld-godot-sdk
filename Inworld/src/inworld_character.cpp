@@ -3,6 +3,7 @@
 #include "inworld_session.h"
 
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
@@ -20,6 +21,9 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("send_text", "text"), &InworldCharacter::send_text);
 	ClassDB::bind_method(D_METHOD("on_text_event", "text"), &InworldCharacter::on_text_event);
 	ADD_SIGNAL(MethodInfo("text_event", PropertyInfo(Variant::STRING, "text")));
+
+	ClassDB::bind_method(D_METHOD("on_audio_event", "audio"), &InworldCharacter::on_audio_event);
+	ADD_SIGNAL(MethodInfo("audio_event", PropertyInfo(Variant::STRING, "audio")));
 }
 
 InworldCharacter::InworldCharacter() :
@@ -60,6 +64,13 @@ void InworldCharacter::on_text_event(String p_text) {
 	emit_signal("text_event", p_text);
 }
 
+void InworldCharacter::on_audio_event(String p_data_chunk) {
+	UtilityFunctions::push_warning(String("On Audio Event"), __FUNCTION__, __FILE__, __LINE__);
+	emit_signal("audio_event", p_data_chunk);
+	// 16000 sample rate pcm data
+	// unit16 (-1:1 maybe)
+}
+
 void InworldCharacter::bind_brain_to_session() {
 	if (session == nullptr) {
 		return;
@@ -79,7 +90,9 @@ void InworldCharacter::unbind_brain_from_session() {
 void InworldCharacter::on_session_established(bool p_established) {
 	if (p_established) {
 		session->connect_text_events(brain, Callable(this, "on_text_event"));
+		session->connect_audio_events(brain, Callable(this, "on_audio_event"));
 	} else {
 		session->disconnect_text_events(brain, Callable(this, "on_text_event"));
+		session->disconnect_audio_events(brain, Callable(this, "on_audio_event"));
 	}
 }

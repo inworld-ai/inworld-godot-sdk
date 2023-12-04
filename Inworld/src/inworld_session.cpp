@@ -109,6 +109,13 @@ void InworldSession::start() {
 					signal_param["type"] = Variant::STRING;
 
 					packet_handler->add_user_signal(signal_name, TypedArray<Dictionary>(signal_param));
+
+					const String signal_name_audio = String(agent_info.AgentId.c_str()) + "_audio";
+					Dictionary signal_param_audio;
+					signal_param_audio["name"] = "audio";
+					signal_param_audio["type"] = Variant::STRING;
+
+					packet_handler->add_user_signal(signal_name_audio, TypedArray<Dictionary>(signal_param_audio));
 				}
 
 				established = true;
@@ -157,6 +164,26 @@ void InworldSession::disconnect_text_events(String p_brain, const Callable &p_ca
 		return;
 	}
 	const String signal_name = String(agent_info_map[p_brain.utf8().get_data()].AgentId.c_str()) + "_text";
+	if (packet_handler->has_signal(signal_name) && packet_handler->is_connected(signal_name, p_callable)) {
+		packet_handler->disconnect(signal_name, p_callable);
+	}
+}
+
+void InworldSession::connect_audio_events(String p_brain, const Callable &p_callable, uint32_t p_flags) {
+	if (packet_handler == nullptr) {
+		return;
+	}
+	const String signal_name = String(agent_info_map[p_brain.utf8().get_data()].AgentId.c_str()) + "_audio";
+	if (packet_handler->has_signal(signal_name) && !packet_handler->is_connected(signal_name, p_callable)) {
+		packet_handler->connect(signal_name, p_callable, p_flags);
+	}
+}
+
+void InworldSession::disconnect_audio_events(String p_brain, const Callable &p_callable) {
+	if (packet_handler == nullptr) {
+		return;
+	}
+	const String signal_name = String(agent_info_map[p_brain.utf8().get_data()].AgentId.c_str()) + "_audio";
 	if (packet_handler->has_signal(signal_name) && packet_handler->is_connected(signal_name, p_callable)) {
 		packet_handler->disconnect(signal_name, p_callable);
 	}

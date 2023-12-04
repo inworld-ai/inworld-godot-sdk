@@ -20,6 +20,5 @@ func add_text(who : String, text : String) -> void:
 func _on_interface_character_text(text : String) -> void:
 	add_text("Character", text)
 
-
 func _on_interface_player_text(text : String) -> void:
 	add_text("Player", text)
