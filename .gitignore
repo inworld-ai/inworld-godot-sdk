@@ -31,5 +31,5 @@ bin
 # curl
 !Inworld/curl-7.55.1/lib/Win64/VS2015/libcurl_a.lib
 
-build/.cmake/
-.vscode/
+build/.cm*ake/
+.vscode/*
