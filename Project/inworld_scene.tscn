@@ -7,9 +7,9 @@
 
 [node name="Root" type="Node"]
 
-[node name="Interface" parent="." node_paths=PackedStringArray("inworld_character") instance=ExtResource("2_swbl7")]
+[node name="Interface" parent="." node_paths=PackedStringArray("inworld_player") instance=ExtResource("2_swbl7")]
 theme = SubResource("Theme_oxc0t")
-inworld_character = NodePath("../InworldCharacter")
+inworld_player = NodePath("../InworldPlayer")
 
 [node name="InworldSession" type="InworldSession" parent="."]
 scene = "workspaces/godot/scenes/godot"
@@ -19,6 +19,9 @@ script = ExtResource("2_yrq8l")
 [node name="InworldCharacter" type="InworldCharacter" parent="." node_paths=PackedStringArray("session")]
 brain = "workspaces/godot/characters/godot"
 session = NodePath("../InworldSession")
+
+[node name="InworldPlayer" type="InworldPlayer" parent="." node_paths=PackedStringArray("target_character")]
+target_character = NodePath("../InworldCharacter")
 
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
 [connection signal="text_event" from="InworldCharacter" to="Interface" method="_on_inworld_got_text"]
