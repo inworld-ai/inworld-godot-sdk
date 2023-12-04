@@ -29,6 +29,10 @@ public:
 	void send_text(String p_text);
 	void on_text_event(String p_text);
 
+	void start_audio_session();
+	void stop_audio_session();
+	void send_audio(PackedVector2Array data);
+
 private:
 	void bind_brain_to_session();
 	void unbind_brain_from_session();

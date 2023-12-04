@@ -50,6 +50,10 @@ public:
 
 	void send_text(String p_brain, String p_text);
 
+	void start_audio_session(String p_brain);
+	void stop_audio_session(String p_brain);
+	void send_audio(String p_brain, const std::string& p_data);
+
 	void connect_text_events(String p_brain, const Callable &p_callable, uint32_t p_flags = 0);
 	void disconnect_text_events(String p_brain, const Callable &p_callable);
 

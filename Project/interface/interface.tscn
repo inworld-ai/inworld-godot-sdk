@@ -32,6 +32,10 @@ anchors_preset = 10
 anchor_bottom = 0.0
 grow_vertical = 1
 
+[node name="Listen" type="AudioListener2D" parent="."]
+
 [connection signal="character_text" from="." to="TextOutput" method="_on_interface_character_text"]
 [connection signal="player_text" from="." to="TextOutput" method="_on_interface_player_text"]
 [connection signal="entered" from="TextInput" to="." method="_on_text_input_entered"]
+[connection signal="recording" from="TextInput" to="." method="_on_text_input_recording"]
+[connection signal="stop_recording" from="TextInput" to="." method="_on_text_input_stop_recording"]

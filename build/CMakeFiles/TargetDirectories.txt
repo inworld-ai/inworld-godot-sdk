@@ -1,0 +1,3 @@
+/Users/vsivaraja/dev/inworld-godot-sdk/build/CMakeFiles/godot-cpp.dir
+/Users/vsivaraja/dev/inworld-godot-sdk/build/CMakeFiles/edit_cache.dir
+/Users/vsivaraja/dev/inworld-godot-sdk/build/CMakeFiles/rebuild_cache.dir

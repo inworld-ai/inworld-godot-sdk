@@ -1,0 +1,15 @@
+{
+    "configurations": [
+      {
+        "name": "godot",
+        "includePath": [
+          "${workspaceFolder}/**",
+          "godot-cpp/include/**"
+        ],
+        "intelliSenseMode": "macos-clang-arm64",
+        "compilerPath": "/usr/bin/clang"
+      }
+    ],
+    "version": 4
+  }
+  

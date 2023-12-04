@@ -20,6 +20,10 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("send_text", "text"), &InworldCharacter::send_text);
 	ClassDB::bind_method(D_METHOD("on_text_event", "text"), &InworldCharacter::on_text_event);
 	ADD_SIGNAL(MethodInfo("text_event", PropertyInfo(Variant::STRING, "text")));
+
+	ClassDB::bind_method(D_METHOD("start_audio_session"), &InworldCharacter::start_audio_session);
+	ClassDB::bind_method(D_METHOD("stop_audio_session"), &InworldCharacter::stop_audio_session);
+	ClassDB::bind_method(D_METHOD("send_audio", "data"), &InworldCharacter::send_audio);
 }
 
 InworldCharacter::InworldCharacter() :
@@ -47,6 +51,44 @@ void InworldCharacter::set_session(InworldSession *p_session) {
 
 InworldSession *InworldCharacter::get_session() const {
 	return session;
+}
+
+void InworldCharacter::start_audio_session() {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return;
+	}
+	session->start_audio_session(brain);
+}
+
+void InworldCharacter::stop_audio_session() {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return;
+	}
+	session->stop_audio_session(brain);
+}
+
+void InworldCharacter::send_audio(PackedVector2Array data) {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return;
+	}
+	std::string byteString;
+    for (Vector2 v : data) {
+		float curr = (v.x + v.y) / 2.0f;
+        const char* bytes = reinterpret_cast<const char*>(&curr);
+        byteString.append(bytes, sizeof(float));
+    }
+	session->send_audio(brain, byteString);
+}
+
+std::string pack_floats(const PackedVector2Array vec) {
+    std::string byteString;
+    for (Vector2 v : vec) {
+		float curr = (v.x + v.y) / 2.0f;
+        const char* bytes = reinterpret_cast<const char*>(&curr);
+        byteString.append(bytes, sizeof(float));
+    }
+
+    return byteString;
 }
 
 void InworldCharacter::send_text(String p_text) {

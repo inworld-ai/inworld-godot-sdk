@@ -138,6 +138,18 @@ bool InworldSession::get_established() const {
 	return established;
 }
 
+void InworldSession::start_audio_session(String p_brain) {
+	client.StartAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
+}
+
+void InworldSession::stop_audio_session(String p_brain) {
+	client.StopAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
+}
+
+void InworldSession::send_audio(String p_brain, const std::string& p_data) {
+	client.SendSoundMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, p_data);
+}
+
 void InworldSession::send_text(String p_brain, String p_text) {
 	client.SendTextMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, p_text.utf8().get_data());
 }
