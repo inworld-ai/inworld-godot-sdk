@@ -2,6 +2,7 @@
 
 #include "inworld_character.h"
 #include "inworld_packet_handler.h"
+#include "inworld_player.h"
 #include "inworld_session.h"
 
 #include "Utils/Log.h"
@@ -41,6 +42,7 @@ void initialize_inworld_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<InworldSession>();
 	ClassDB::register_class<InworldPacketHandler>();
 	ClassDB::register_class<InworldCharacter>();
+	ClassDB::register_class<InworldPlayer>();
 
 	Inworld::LogSetLoggerCallback(LogCallback);
 }
