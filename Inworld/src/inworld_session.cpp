@@ -103,12 +103,23 @@ void InworldSession::start() {
 				for (const Inworld::AgentInfo &agent_info : p_agent_infos) {
 					agent_info_map[agent_info.BrainName] = agent_info;
 
-					const String signal_name = String(agent_info.AgentId.c_str()) + "_text";
-					Dictionary signal_param;
-					signal_param["name"] = "text";
-					signal_param["type"] = Variant::STRING;
+					const String signal_prefix = String(agent_info.AgentId.c_str());
 
-					packet_handler->add_user_signal(signal_name, TypedArray<Dictionary>(signal_param));
+#define DEFINE_USER_SIGNAL(Type)                                                                                            \
+	{                                                                                                                       \
+		Dictionary signal_param;                                                                                            \
+		signal_param["name"] = #Type;                                                                                       \
+		signal_param["type"] = Variant::OBJECT;                                                                             \
+		packet_handler->add_user_signal(signal_prefix + String("_") + String(#Type), TypedArray<Dictionary>(signal_param)); \
+	}
+
+					DEFINE_USER_SIGNAL(text);
+					DEFINE_USER_SIGNAL(audio);
+					DEFINE_USER_SIGNAL(emotion);
+					DEFINE_USER_SIGNAL(trigger);
+					DEFINE_USER_SIGNAL(control);
+
+#undef DEFINE_USER_SIGNAL
 				}
 
 				established = true;
@@ -142,25 +153,34 @@ void InworldSession::send_text(String p_brain, String p_text) {
 	client.SendTextMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, p_text.utf8().get_data());
 }
 
-void InworldSession::connect_text_events(String p_brain, const Callable &p_callable, uint32_t p_flags) {
-	if (packet_handler == nullptr) {
-		return;
+#define DEFINE_CONNECT_EVENTS(Type)                                                                                 \
+	void InworldSession::connect_##Type##_events(String p_brain, const Callable &p_callable, uint32_t p_flags) {    \
+		if (packet_handler == nullptr) {                                                                            \
+			return;                                                                                                 \
+		}                                                                                                           \
+		const String signal_name = String(agent_info_map[p_brain.utf8().get_data()].AgentId.c_str()) + "_" + #Type; \
+		if (packet_handler->has_signal(signal_name) && !packet_handler->is_connected(signal_name, p_callable)) {    \
+			packet_handler->connect(signal_name, p_callable, p_flags);                                              \
+		}                                                                                                           \
+	}                                                                                                               \
+                                                                                                                    \
+	void InworldSession::disconnect_##Type##_events(String p_brain, const Callable &p_callable) {                   \
+		if (packet_handler == nullptr) {                                                                            \
+			return;                                                                                                 \
+		}                                                                                                           \
+		const String signal_name = String(agent_info_map[p_brain.utf8().get_data()].AgentId.c_str()) + "_" + #Type; \
+		if (packet_handler->has_signal(signal_name) && packet_handler->is_connected(signal_name, p_callable)) {     \
+			packet_handler->disconnect(signal_name, p_callable);                                                    \
+		}                                                                                                           \
 	}
-	const String signal_name = String(agent_info_map[p_brain.utf8().get_data()].AgentId.c_str()) + "_text";
-	if (packet_handler->has_signal(signal_name) && !packet_handler->is_connected(signal_name, p_callable)) {
-		packet_handler->connect(signal_name, p_callable, p_flags);
-	}
-}
 
-void InworldSession::disconnect_text_events(String p_brain, const Callable &p_callable) {
-	if (packet_handler == nullptr) {
-		return;
-	}
-	const String signal_name = String(agent_info_map[p_brain.utf8().get_data()].AgentId.c_str()) + "_text";
-	if (packet_handler->has_signal(signal_name) && packet_handler->is_connected(signal_name, p_callable)) {
-		packet_handler->disconnect(signal_name, p_callable);
-	}
-}
+DEFINE_CONNECT_EVENTS(text)
+DEFINE_CONNECT_EVENTS(audio)
+DEFINE_CONNECT_EVENTS(emotion)
+DEFINE_CONNECT_EVENTS(trigger)
+DEFINE_CONNECT_EVENTS(control)
+
+#undef DEFINE_CONNECT_EVENTS
 
 void InworldSession::set_scene(String p_scene) {
 	scene = p_scene;
