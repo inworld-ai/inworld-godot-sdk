@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://cesm2ftmwtcnp"]
+[gd_scene load_steps=5 format=3 uid="uid://cesm2ftmwtcnp"]
 
 [ext_resource type="PackedScene" uid="uid://ditschkewt7ub" path="res://interface/text_input.tscn" id="1_3djxw"]
 [ext_resource type="Script" path="res://interface/interface.gd" id="1_pt2po"]
 [ext_resource type="PackedScene" uid="uid://ldhr6dpms0lt" path="res://interface/text_output.tscn" id="3_8p7bn"]
+
+[sub_resource type="AudioStreamMicrophone" id="AudioStreamMicrophone_jkltv"]
 
 [node name="Interface" type="Control"]
 layout_mode = 3
@@ -32,7 +34,9 @@ anchors_preset = 10
 anchor_bottom = 0.0
 grow_vertical = 1
 
-[node name="Listen" type="AudioListener2D" parent="."]
+[node name="MicListener" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamMicrophone_jkltv")
+bus = &"Listen"
 
 [connection signal="character_text" from="." to="TextOutput" method="_on_interface_character_text"]
 [connection signal="player_text" from="." to="TextOutput" method="_on_interface_player_text"]
