@@ -32,6 +32,7 @@ public:
 	InworldSession *get_session() const;
 
 	void send_text(String p_text);
+	void send_trigger(String p_name, Dictionary p_params);
 
 	void on_event_text(Ref<InworldEventText> p_event_text);
 	void on_event_audio(Ref<InworldEventDataAudio> p_event_audio);

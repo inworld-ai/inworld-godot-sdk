@@ -20,6 +20,7 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("on_session_established", "established"), &InworldCharacter::on_session_established);
 
 	ClassDB::bind_method(D_METHOD("send_text", "text"), &InworldCharacter::send_text);
+	ClassDB::bind_method(D_METHOD("send_trigger", "text", "params"), &InworldCharacter::send_trigger);
 
 	ClassDB::bind_method(D_METHOD("on_event_text", "text"), &InworldCharacter::on_event_text);
 	ClassDB::bind_method(D_METHOD("on_event_audio", "audio"), &InworldCharacter::on_event_audio);
@@ -66,6 +67,13 @@ void InworldCharacter::send_text(String p_text) {
 		return;
 	}
 	session->send_text(brain, p_text);
+}
+
+void InworldCharacter::send_trigger(String p_name, Dictionary p_params) {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return;
+	}
+	session->send_trigger(brain, p_name, p_params);
 }
 
 void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {

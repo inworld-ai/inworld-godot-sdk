@@ -153,6 +153,16 @@ void InworldSession::send_text(String p_brain, String p_text) {
 	client.SendTextMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, p_text.utf8().get_data());
 }
 
+void InworldSession::send_trigger(String p_brain, String p_name, Dictionary p_params) {
+	std::unordered_map<std::string, std::string> map;
+	for (int64_t i = 0; i < p_params.size(); ++i) {
+		const String key = p_params.keys()[i].stringify();
+		const String value = p_params.values()[i].stringify();
+		map[key.utf8().get_data()] = value.utf8().get_data();
+	}
+	client.SendCustomEvent(agent_info_map[p_brain.utf8().get_data()].AgentId, p_name.utf8().get_data(), map);
+}
+
 #define DEFINE_CONNECT_EVENTS(Type)                                                                                 \
 	void InworldSession::connect_##Type##_events(String p_brain, const Callable &p_callable, uint32_t p_flags) {    \
 		if (packet_handler == nullptr) {                                                                            \
