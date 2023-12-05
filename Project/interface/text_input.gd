@@ -11,11 +11,8 @@ func _on_send_button_pressed() -> void:
 	entered.emit(line_edit.text)
 	line_edit.clear()
 
+func _on_record_button_down():
+	recording.emit()
 
-func _on_record_button_pressed():
-	if $HBoxContainer/Record.disabled == true:
-		stop_recording.emit()
-		$HBoxContainer/Record.disabled = false
-	else:
-		recording.emit()
-		$HBoxContainer/Record.disabled = true
+func _on_record_button_up():
+	stop_recording.emit()

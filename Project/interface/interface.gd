@@ -21,17 +21,17 @@ func _on_inworld_got_text(text : String):
 	character_text.emit(text)
 
 func _process(delta):
-	var buf = effect.get_buffer(effect.get_frames_available())
-	print(buf)
-	inworld_player.target_character.send_audio(buf)
-	effect.clear_buffer()
+	if $Listen.is_current():
+		var num_frames = effect.get_buffer_length_frames()
+		var buf = effect.get_buffer(effect.get_frames_available())
+		inworld_player.target_character.send_audio(buf)
+		
+		#effect.clear_buffer()
 
 func _on_text_input_recording():
-	$MicListener.autoplay = true
-	print("Starting audio session!")
+	$Listen.make_current()
 	inworld_player.target_character.start_audio_session()
 
 func _on_text_input_stop_recording():
-	$MicListener.autoplay = false
-	print("Stopping audio session!")
+	$Listen.clear_current()
 	inworld_player.target_character.stop_audio_session()
