@@ -19,10 +19,16 @@ func _on_text_input_entered(text : String):
 
 func _process(delta):
 	if $Listen.is_current():
-		print(effect.get_frames_available())
-		var buf = effect.get_buffer(effect.get_frames_available())
-		inworld_player.target_character.send_audio(buf)
-		effect.clear_buffer()
+		
+		var total = effect.get_buffer_length_frames()
+		var left = effect.get_frames_available()
+		#print(total, " ", left, " ", total - left)
+	
+		if effect.can_get_buffer(total - left):
+			var buf = effect.get_buffer(total - left);
+			print(buf.size())
+			effect.clear_buffer()
+			inworld_player.target_character.send_audio(buf)
 
 func _on_text_input_recording():
 	if $Listen.is_current() == false:

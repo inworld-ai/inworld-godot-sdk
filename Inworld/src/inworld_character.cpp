@@ -87,13 +87,13 @@ void InworldCharacter::send_audio(PackedVector2Array data) {
 	}
 	std::vector<int16_t> vec;
 	vec.resize(data.size());
-    for (int i = 0; i < data.size(); i++) {
+	for (int i = 0; i < data.size(); i++) {
 		UtilityFunctions::print(String(std::to_string(data[i].x).c_str()));
 		int16_t curr_val = int((data[i].x + 1.0) * 32768) - 1;
 		UtilityFunctions::print(String(std::to_string(curr_val).c_str()));
-		vec[i] = curr_val * 32767;
+		vec[i] = curr_val;
 		// UtilityFunctions::print(String(std::to_string(curr).c_str()));
-    }
+	}
 	std::string buf;
 	buf.resize(2 * vec.size());
 	memcpy(buf.data(), vec.data(), vec.size());
