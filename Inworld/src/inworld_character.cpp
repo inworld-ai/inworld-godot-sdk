@@ -23,7 +23,7 @@ void InworldCharacter::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("text_event", PropertyInfo(Variant::STRING, "text")));
 
 	ClassDB::bind_method(D_METHOD("on_audio_event", "audio"), &InworldCharacter::on_audio_event);
-	ADD_SIGNAL(MethodInfo("audio_event", PropertyInfo(Variant::STRING, "audio")));
+	ADD_SIGNAL(MethodInfo("audio_event", PropertyInfo(Variant::OBJECT, "audio")));
 }
 
 InworldCharacter::InworldCharacter() :
@@ -64,11 +64,8 @@ void InworldCharacter::on_text_event(String p_text) {
 	emit_signal("text_event", p_text);
 }
 
-void InworldCharacter::on_audio_event(String p_data_chunk) {
-	UtilityFunctions::push_warning(String("On Audio Event"), __FUNCTION__, __FILE__, __LINE__);
+void InworldCharacter::on_audio_event(PackedByteArray p_data_chunk) {
 	emit_signal("audio_event", p_data_chunk);
-	// 16000 sample rate pcm data
-	// unit16 (-1:1 maybe)
 }
 
 void InworldCharacter::bind_brain_to_session() {

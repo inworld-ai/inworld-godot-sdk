@@ -16,14 +16,14 @@ func _on_inworld_got_text(text : String):
 	print("TEXT")
 	character_text.emit(text)
 
-func _on_inworld_got_audio(audioDataBase64 : String):
+func _on_inworld_got_audio(audioData : PackedByteArray):
 	print("AUDIO")
-	#var audio_wav = AudioStreamWAV.new()
-	##var audioData = Marshalls.base64_to_raw(audioDataBase64);
-	#var crypto = Crypto.new()
-	#var audioData = crypto.decode_base64_to_array(audioDataBase64);
-	#audio_wav.data = audioData
-	#audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
-	#
-	#$AudioStreamPlayer.stream = audio_wav;
-	#$AudioStreamPlayer.play();
+	var audio_wav = AudioStreamWAV.new()
+
+	audio_wav.data = audioData;
+	audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
+	audio_wav.mix_rate = 16000;
+	
+	$AudioStreamPlayer.stream = audio_wav;
+	$AudioStreamPlayer.play();
+

@@ -27,8 +27,18 @@ void InworldPacketHandler::Visit(const Inworld::TextEvent &Event) {
 void InworldPacketHandler::Visit(const Inworld::AudioDataEvent &Event) {
 	const String signal_name = String(Event._Routing._Source._Name.c_str()) + "_audio";
 	if (has_signal(signal_name)) {
-		UtilityFunctions::push_warning(String("Received Audio"), __FUNCTION__, __FILE__, __LINE__);
-		emit_signal(signal_name, String(Event.GetDataChunk().c_str()));
+		std::string dataChunk = Event.GetDataChunk();
+		const uint8_t* data = (uint8_t*)(dataChunk.data());
+
+		Array *dataArray = new Array();
+		dataArray->resize(dataChunk.size());
+		for (size_t i = 0; i < dataChunk.size(); i++)
+		{
+			dataArray->push_back(data[i]);
+		}
+
+		PackedByteArray *byteArray = new PackedByteArray(*dataArray);
+		emit_signal(signal_name, *byteArray);
 	} else {
 		UtilityFunctions::push_warning(String("Missing Signal:") + signal_name, __FUNCTION__, __FILE__, __LINE__);
 	}

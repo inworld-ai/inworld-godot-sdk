@@ -113,7 +113,7 @@ void InworldSession::start() {
 					const String signal_name_audio = String(agent_info.AgentId.c_str()) + "_audio";
 					Dictionary signal_param_audio;
 					signal_param_audio["name"] = "audio";
-					signal_param_audio["type"] = Variant::STRING;
+					signal_param_audio["type"] = Variant::PACKED_BYTE_ARRAY;
 
 					packet_handler->add_user_signal(signal_name_audio, TypedArray<Dictionary>(signal_param_audio));
 				}

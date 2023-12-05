@@ -26,5 +26,5 @@ session = NodePath("../InworldSession")
 target_character = NodePath("../InworldCharacter")
 
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
+[connection signal="audio_event" from="InworldCharacter" to="Interface" method="_on_inworld_got_audio"]
 [connection signal="text_event" from="InworldCharacter" to="Interface" method="_on_inworld_got_text"]
-[connection signal="text_event" from="InworldCharacter" to="Interface" method="_on_inworld_got_audio"]
