@@ -22,7 +22,7 @@ func _on_inworld_got_audio(audioData : PackedByteArray):
 
 	audio_wav.data = audioData;
 	audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
-	audio_wav.mix_rate = 16000;
+	audio_wav.mix_rate = 22000;
 	
 	$AudioStreamPlayer.stream = audio_wav;
 	$AudioStreamPlayer.play();
