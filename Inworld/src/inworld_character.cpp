@@ -4,6 +4,8 @@
 
 #include <godot_cpp/core/class_db.hpp>
 
+#include <godot_cpp/variant/utility_functions.hpp>
+
 using namespace godot;
 
 void InworldCharacter::_bind_methods() {
@@ -71,24 +73,20 @@ void InworldCharacter::send_audio(PackedVector2Array data) {
 	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
 		return;
 	}
-	std::string byteString;
-    for (Vector2 v : data) {
-		float curr = (v.x + v.y) / 2.0f;
-        const char* bytes = reinterpret_cast<const char*>(&curr);
-        byteString.append(bytes, sizeof(float));
+	std::vector<int16_t> vec;
+	vec.resize(data.size());
+    for (int i = 0; i < data.size(); i++) {
+		UtilityFunctions::print(String(std::to_string(data[i].x).c_str()));
+		int16_t curr_val = int((data[i].x + 1.0) * 32768) - 1;
+		UtilityFunctions::print(String(std::to_string(curr_val).c_str()));
+		vec[i] = curr_val * 32767;
+		// UtilityFunctions::print(String(std::to_string(curr).c_str()));
     }
-	session->send_audio(brain, byteString);
-}
-
-std::string pack_floats(const PackedVector2Array vec) {
-    std::string byteString;
-    for (Vector2 v : vec) {
-		float curr = (v.x + v.y) / 2.0f;
-        const char* bytes = reinterpret_cast<const char*>(&curr);
-        byteString.append(bytes, sizeof(float));
-    }
-
-    return byteString;
+	std::string buf;
+	buf.resize(2 * vec.size());
+	memcpy(buf.data(), vec.data(), vec.size());
+	// UtilityFunctions::print(String(buf.c_str()));
+	session->send_audio(brain, buf);
 }
 
 void InworldCharacter::send_text(String p_text) {

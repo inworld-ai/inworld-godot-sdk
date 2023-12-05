@@ -36,6 +36,8 @@ grow_vertical = 1
 
 [node name="MicListener" type="AudioStreamPlayer2D" parent="."]
 stream = SubResource("AudioStreamMicrophone_jkltv")
+volume_db = 24.0
+autoplay = true
 bus = &"Listen"
 
 [node name="Listen" type="AudioListener2D" parent="."]
