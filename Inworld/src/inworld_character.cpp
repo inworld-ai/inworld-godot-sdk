@@ -23,7 +23,7 @@ void InworldCharacter::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("text_event", PropertyInfo(Variant::STRING, "text")));
 
 	ClassDB::bind_method(D_METHOD("on_audio_event", "audio"), &InworldCharacter::on_audio_event);
-	ADD_SIGNAL(MethodInfo("audio_event", PropertyInfo(Variant::OBJECT, "audio")));
+	ADD_SIGNAL(MethodInfo("audio_event", PropertyInfo(Variant::PACKED_BYTE_ARRAY, "audio")));
 }
 
 InworldCharacter::InworldCharacter() :
