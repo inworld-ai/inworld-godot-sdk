@@ -27,6 +27,7 @@ public:
 	InworldSession *get_session() const;
 
 	void send_text(String p_text);
+	void send_trigger(String p_name, Dictionary p_params);
 	void on_text_event(String p_text);
 
 private:

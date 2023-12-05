@@ -49,6 +49,7 @@ public:
 	bool get_established() const;
 
 	void send_text(String p_brain, String p_text);
+	void send_trigger(String p_brain, String p_name, Dictionary p_params);
 
 	void connect_text_events(String p_brain, const Callable &p_callable, uint32_t p_flags = 0);
 	void disconnect_text_events(String p_brain, const Callable &p_callable);
