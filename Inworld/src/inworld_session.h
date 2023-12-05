@@ -51,8 +51,17 @@ public:
 	void send_text(String p_brain, String p_text);
 	void send_trigger(String p_brain, String p_name, Dictionary p_params);
 
-	void connect_text_events(String p_brain, const Callable &p_callable, uint32_t p_flags = 0);
-	void disconnect_text_events(String p_brain, const Callable &p_callable);
+#define DECLARE_CONNECT_EVENTS(Type)                                                                \
+	void connect_##Type##_events(String p_brain, const Callable &p_callable, uint32_t p_flags = 0); \
+	void disconnect_##Type##_events(String p_brain, const Callable &p_callable);
+
+	DECLARE_CONNECT_EVENTS(text)
+	DECLARE_CONNECT_EVENTS(audio)
+	DECLARE_CONNECT_EVENTS(emotion)
+	DECLARE_CONNECT_EVENTS(trigger)
+	DECLARE_CONNECT_EVENTS(control)
+
+#undef DECLARE_CONNECT_EVENTS
 
 private:
 	void set_scene(String p_scene);
