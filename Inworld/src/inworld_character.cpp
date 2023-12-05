@@ -22,7 +22,6 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("on_session_established", "established"), &InworldCharacter::on_session_established);
 
 	ClassDB::bind_method(D_METHOD("send_text", "text"), &InworldCharacter::send_text);
-
 	ClassDB::bind_method(D_METHOD("start_audio_session"), &InworldCharacter::start_audio_session);
 	ClassDB::bind_method(D_METHOD("stop_audio_session"), &InworldCharacter::stop_audio_session);
 	ClassDB::bind_method(D_METHOD("send_audio", "data"), &InworldCharacter::send_audio);

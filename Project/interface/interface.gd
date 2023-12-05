@@ -17,9 +17,6 @@ func _on_text_input_entered(text : String):
 	player_text.emit(text)
 	inworld_player.target_character.send_text(text)
 
-func _on_inworld_got_text(text : String):
-	character_text.emit(text)
-
 func _process(delta):
 	if $Listen.is_current():
 		print(effect.get_frames_available())
@@ -35,11 +32,8 @@ func _on_text_input_recording():
 		inworld_player.target_character.start_audio_session()
 
 func _on_text_input_stop_recording():
-	if $Listen.is_current() == true:
-		print("Ending audio session")
-		$MicListener.autoplay = false
-		$Listen.clear_current()
-		inworld_player.target_character.stop_audio_session()
+	$Listen.clear_current()
+	inworld_player.target_character.stop_audio_session()
 
 func _on_inworld_character_message_talk(talk : InworldMessageTalk):
 	if(!talk.text.is_empty()):
@@ -58,7 +52,6 @@ func _on_inworld_character_message_talk(talk : InworldMessageTalk):
 
 func _on_inworld_character_message_emotion(emotion : InworldMessageEmotion):
 	print(emotion.behavior + " " + emotion.strength)
-
 
 
 func _on_inworld_character_message_trigger(trigger : InworldMessageTrigger):
