@@ -11,6 +11,8 @@
 theme = SubResource("Theme_oxc0t")
 inworld_player = NodePath("../InworldPlayer")
 
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Interface"]
+
 [node name="InworldSession" type="InworldSession" parent="."]
 scene = "workspaces/godot/scenes/godot"
 auth = "NElaNFhqTkVTU2tzNG1QSHVPcUQyS1ZHZlg5ZWk0MzQ6MHlqbXV5VGVpY2s4YUM5OVhLR1doTE5VaThFMnRjWXBTZDd4YTJVYTJuV1hZd0oyTnpLaFpyTXI5c0llYlF0Uw=="

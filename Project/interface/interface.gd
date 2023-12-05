@@ -14,6 +14,16 @@ func _on_text_input_entered(text : String):
 func _on_inworld_character_message_talk(talk : InworldMessageTalk):
 	if(!talk.text.is_empty()):
 		character_text.emit(talk.text)
+		
+	if(!talk.chunk.is_empty()):
+		var audio_wav = AudioStreamWAV.new()
+
+		audio_wav.data = talk.chunk;
+		audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
+		audio_wav.mix_rate = 22000;
+		
+		$AudioStreamPlayer.stream = audio_wav;
+		$AudioStreamPlayer.play();
 
 
 func _on_inworld_character_message_emotion(emotion : InworldMessageEmotion):
