@@ -1,6 +1,8 @@
 #include "register_types.h"
 
 #include "inworld_character.h"
+#include "inworld_event.h"
+#include "inworld_message.h"
 #include "inworld_packet_handler.h"
 #include "inworld_player.h"
 #include "inworld_session.h"
@@ -43,6 +45,21 @@ void initialize_inworld_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<InworldPacketHandler>();
 	ClassDB::register_class<InworldCharacter>();
 	ClassDB::register_class<InworldPlayer>();
+
+	ClassDB::register_abstract_class<InworldEvent>();
+	ClassDB::register_class<InworldEventText>();
+	ClassDB::register_class<InworldEventData>();
+	ClassDB::register_class<InworldEventDataAudio>();
+	ClassDB::register_class<InworldEventEmotion>();
+	ClassDB::register_class<InworldEventTrigger>();
+	ClassDB::register_class<InworldEventControl>();
+
+	ClassDB::register_abstract_class<InworldMessage>();
+	ClassDB::register_class<InworldMessageTalk>();
+	ClassDB::register_class<InworldMessageSpeechToText>();
+	ClassDB::register_class<InworldMessageEmotion>();
+	ClassDB::register_class<InworldMessageTrigger>();
+	ClassDB::register_class<InworldMessageControl>();
 
 	Inworld::LogSetLoggerCallback(LogCallback);
 }
