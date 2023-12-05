@@ -40,3 +40,31 @@ func _on_text_input_stop_recording():
 		$MicListener.autoplay = false
 		$Listen.clear_current()
 		inworld_player.target_character.stop_audio_session()
+
+func _on_inworld_character_message_talk(talk : InworldMessageTalk):
+	if(!talk.text.is_empty()):
+		character_text.emit(talk.text)
+		
+	if(!talk.chunk.is_empty()):
+		var audio_wav = AudioStreamWAV.new()
+
+		audio_wav.data = talk.chunk;
+		audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
+		audio_wav.mix_rate = 22000;
+		
+		$AudioStreamPlayer.stream = audio_wav;
+		$AudioStreamPlayer.play();
+
+
+func _on_inworld_character_message_emotion(emotion : InworldMessageEmotion):
+	print(emotion.behavior + " " + emotion.strength)
+
+
+
+func _on_inworld_character_message_trigger(trigger : InworldMessageTrigger):
+	print(trigger.name)
+
+
+func _on_inworld_character_message_control(control : InworldMessageControl):
+	if(control.type == "InteractionEnd"):
+		print("----------")
