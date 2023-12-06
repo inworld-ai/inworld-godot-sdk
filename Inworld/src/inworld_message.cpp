@@ -30,6 +30,7 @@ String InworldMessage::get_utterance_id() const {
 void InworldMessageTalk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_text"), &InworldMessageTalk::get_text);
 	ClassDB::bind_method(D_METHOD("get_chunk"), &InworldMessageTalk::get_chunk);
+	ClassDB::bind_method(D_METHOD("get_ready"), &InworldMessageTalk::get_ready);
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "text"), "", "get_text");
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_BYTE_ARRAY, "chunk"), "", "get_chunk");
@@ -48,6 +49,10 @@ String InworldMessageTalk::get_text() const {
 
 PackedByteArray InworldMessageTalk::get_chunk() const {
 	return chunk;
+}
+
+bool InworldMessageTalk::get_ready() const {
+	return !text.is_empty() && !chunk.is_empty();
 }
 
 void InworldMessageSpeechToText::_bind_methods() {

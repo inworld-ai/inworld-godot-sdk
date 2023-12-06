@@ -7,6 +7,7 @@
 #include "inworld_packet_handler.h"
 #include "inworld_player.h"
 #include "inworld_session.h"
+#include "inworld_talk_queue.h"
 
 #include "Utils/Log.h"
 
@@ -63,6 +64,8 @@ void initialize_inworld_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<InworldMessageEmotion>();
 	ClassDB::register_class<InworldMessageTrigger>();
 	ClassDB::register_class<InworldMessageControl>();
+
+	ClassDB::register_class<InworldTalkQueue>();
 
 	Inworld::LogSetLoggerCallback(LogCallback);
 }
