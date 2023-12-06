@@ -38,6 +38,8 @@ public:
 
 	String get_text() const;
 	PackedByteArray get_chunk() const;
+
+	bool get_ready() const;
 };
 
 class InworldMessageSpeechToText : public InworldMessage {

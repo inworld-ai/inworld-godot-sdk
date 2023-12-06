@@ -31,18 +31,30 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("on_event_trigger", "trigger"), &InworldCharacter::on_event_trigger);
 	ClassDB::bind_method(D_METHOD("on_event_control", "control"), &InworldCharacter::on_event_control);
 
-	ADD_SIGNAL(MethodInfo("message_talk", PropertyInfo(Variant::OBJECT, "talk")));
+	ClassDB::bind_method(D_METHOD("get_talk_queue"), &InworldCharacter::get_talk_queue);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "talk_queue"), "", "get_talk_queue");
+
+	ClassDB::bind_method(D_METHOD("on_talk_queue_next_ready"), &InworldCharacter::on_talk_queue_next_ready);
+
 	ADD_SIGNAL(MethodInfo("message_stt", PropertyInfo(Variant::OBJECT, "stt")));
 	ADD_SIGNAL(MethodInfo("message_emotion", PropertyInfo(Variant::OBJECT, "emotion")));
 	ADD_SIGNAL(MethodInfo("message_trigger", PropertyInfo(Variant::OBJECT, "trigger")));
 	ADD_SIGNAL(MethodInfo("message_control", PropertyInfo(Variant::OBJECT, "control")));
+
+	ADD_SIGNAL(MethodInfo("talk_queue_next_ready", PropertyInfo(Variant::OBJECT, "talk_queue")));
 }
 
 InworldCharacter::InworldCharacter() :
-		Node(), brain(), session(nullptr) {
+		Node(), brain(), session(nullptr), talk_queue(nullptr) {
+	talk_queue = memnew(InworldTalkQueue);
+	talk_queue->connect("next_ready", Callable(this, "on_talk_queue_next_ready"));
 }
 
 InworldCharacter::~InworldCharacter() {
+	if (talk_queue != nullptr) {
+		memdelete(talk_queue);
+		talk_queue = nullptr;
+	}
 }
 
 void InworldCharacter::set_brain(String p_brain) {
@@ -63,6 +75,10 @@ void InworldCharacter::set_session(InworldSession *p_session) {
 
 InworldSession *InworldCharacter::get_session() const {
 	return session;
+}
+
+InworldTalkQueue *InworldCharacter::get_talk_queue() const {
+	return talk_queue;
 }
 
 void InworldCharacter::send_text(String p_text) {
@@ -102,11 +118,7 @@ void InworldCharacter::send_audio(PackedByteArray p_data) {
 
 void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {
 	if (p_event_text->get_source_actor_type() == StringName("Agent")) {
-		Ref<InworldMessageTalk> message_talk;
-		message_talk.instantiate();
-
-		message_talk->text = p_event_text->text;
-		emit_signal("message_talk", message_talk);
+		talk_queue->update_text(p_event_text->get_utterance_id(), p_event_text->text);
 	} else {
 		Ref<InworldMessageSpeechToText> message_stt;
 		message_stt.instantiate();
@@ -118,11 +130,7 @@ void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {
 }
 
 void InworldCharacter::on_event_audio(Ref<InworldEventDataAudio> p_event_audio) {
-	Ref<InworldMessageTalk> message_talk;
-	message_talk.instantiate();
-
-	message_talk->chunk = p_event_audio->chunk;
-	emit_signal("message_talk", message_talk);
+	talk_queue->update_chunk(p_event_audio->get_utterance_id(), p_event_audio->chunk);
 }
 
 void InworldCharacter::on_event_emotion(Ref<InworldEventEmotion> p_event_emotion) {
@@ -152,6 +160,10 @@ void InworldCharacter::on_event_control(Ref<InworldEventControl> p_event_control
 	message_control->type = p_event_control->type;
 
 	emit_signal("message_control", message_control);
+}
+
+void InworldCharacter::on_talk_queue_next_ready() {
+	emit_signal("talk_queue_next_ready", talk_queue);
 }
 
 void InworldCharacter::bind_brain_to_session() {
