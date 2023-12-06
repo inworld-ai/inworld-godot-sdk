@@ -21,6 +21,9 @@ void InworldCharacter::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("send_text", "text"), &InworldCharacter::send_text);
 	ClassDB::bind_method(D_METHOD("send_trigger", "text", "params"), &InworldCharacter::send_trigger);
+	ClassDB::bind_method(D_METHOD("start_audio_session"), &InworldCharacter::start_audio_session);
+	ClassDB::bind_method(D_METHOD("stop_audio_session"), &InworldCharacter::stop_audio_session);
+	ClassDB::bind_method(D_METHOD("send_audio", "data"), &InworldCharacter::send_audio);
 
 	ClassDB::bind_method(D_METHOD("on_event_text", "text"), &InworldCharacter::on_event_text);
 	ClassDB::bind_method(D_METHOD("on_event_audio", "audio"), &InworldCharacter::on_event_audio);
@@ -76,6 +79,27 @@ void InworldCharacter::send_trigger(String p_name, Dictionary p_params) {
 	session->send_trigger(brain, p_name, p_params);
 }
 
+void InworldCharacter::start_audio_session() {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return;
+	}
+	session->start_audio_session(brain);
+}
+
+void InworldCharacter::stop_audio_session() {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return;
+	}
+	session->stop_audio_session(brain);
+}
+
+void InworldCharacter::send_audio(PackedByteArray p_data) {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return;
+	}
+	session->send_audio(brain, p_data);
+}
+
 void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {
 	if (p_event_text->get_source_actor_type() == StringName("Agent")) {
 		Ref<InworldMessageTalk> message_talk;
@@ -89,6 +113,7 @@ void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {
 
 		message_stt->text = p_event_text->text;
 		message_stt->complete = p_event_text->complete;
+		emit_signal("message_stt", message_stt);
 	}
 }
 

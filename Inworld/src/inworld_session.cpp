@@ -69,10 +69,6 @@ InworldSession::~InworldSession() {
 	client.DestroyClient();
 }
 
-void InworldSession::_ready() {
-	Node::_ready();
-}
-
 void InworldSession::_process(double_t delta) {
 	Node::_process(delta);
 	client.Update();
@@ -147,6 +143,19 @@ InworldSession::ConnectionState InworldSession::get_connection_state() const {
 
 bool InworldSession::get_established() const {
 	return established;
+}
+
+void InworldSession::start_audio_session(String p_brain) {
+	client.StartAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
+}
+
+void InworldSession::stop_audio_session(String p_brain) {
+	client.StopAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
+}
+
+void InworldSession::send_audio(String p_brain, PackedByteArray &p_data) {
+	std::string data((char *)p_data.ptrw(), p_data.size());
+	client.SendSoundMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, data);
 }
 
 void InworldSession::send_text(String p_brain, String p_text) {

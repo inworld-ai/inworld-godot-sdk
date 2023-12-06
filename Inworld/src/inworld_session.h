@@ -38,7 +38,6 @@ public:
 	InworldSession();
 	~InworldSession();
 
-	virtual void _ready() override;
 	virtual void _process(double_t delta) override;
 
 public:
@@ -50,6 +49,10 @@ public:
 
 	void send_text(String p_brain, String p_text);
 	void send_trigger(String p_brain, String p_name, Dictionary p_params);
+
+	void start_audio_session(String p_brain);
+	void stop_audio_session(String p_brain);
+	void send_audio(String p_brain, PackedByteArray &p_data);
 
 #define DECLARE_CONNECT_EVENTS(Type)                                                                \
 	void connect_##Type##_events(String p_brain, const Callable &p_callable, uint32_t p_flags = 0); \

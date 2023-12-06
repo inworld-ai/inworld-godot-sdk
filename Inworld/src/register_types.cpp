@@ -3,6 +3,7 @@
 #include "inworld_character.h"
 #include "inworld_event.h"
 #include "inworld_message.h"
+#include "inworld_microphone.h"
 #include "inworld_packet_handler.h"
 #include "inworld_player.h"
 #include "inworld_session.h"
@@ -45,6 +46,8 @@ void initialize_inworld_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<InworldPacketHandler>();
 	ClassDB::register_class<InworldCharacter>();
 	ClassDB::register_class<InworldPlayer>();
+
+	ClassDB::register_class<InworldMicrophone>();
 
 	ClassDB::register_abstract_class<InworldEvent>();
 	ClassDB::register_class<InworldEventText>();

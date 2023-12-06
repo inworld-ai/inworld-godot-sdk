@@ -28,5 +28,6 @@ target_character = NodePath("../InworldCharacter")
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
 [connection signal="message_control" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_control"]
 [connection signal="message_emotion" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_emotion"]
+[connection signal="message_stt" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_stt"]
 [connection signal="message_talk" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_talk"]
 [connection signal="message_trigger" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_trigger"]

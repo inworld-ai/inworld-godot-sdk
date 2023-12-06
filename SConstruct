@@ -15,7 +15,6 @@ env = SConscript("godot-cpp/SConstruct")
 env.Append(CPPDEFINES=["INWORLD_LOG=1"])
 env.Append(CPPDEFINES=["INWORLD_LOG_CALLBACK=1"])
 
-# tweak this if you want to use different folders, or more folders, to store your source code in.
 env.Append(CPPPATH=["Inworld/src/"])
 sources = [
     Glob("Inworld/src/*.cpp")
@@ -24,6 +23,8 @@ sources = [
 env.Append(CPPPATH=['Inworld/inworld-ndk/src'])
 env.Append(CPPPATH=['Inworld/inworld-ndk/src/proto'])
 env.Append(CPPPATH=['Inworld/inworld-ndk/include'])
+
+env.Append(CPPPATH=["Inworld/miniaudio/"])
 
 if env["platform"] == "windows":
 

@@ -35,3 +35,4 @@ grow_vertical = 1
 [connection signal="character_text" from="." to="TextOutput" method="_on_interface_character_text"]
 [connection signal="player_text" from="." to="TextOutput" method="_on_interface_player_text"]
 [connection signal="entered" from="TextInput" to="." method="_on_text_input_entered"]
+[connection signal="recording" from="TextInput" to="." method="_on_text_input_recording"]
