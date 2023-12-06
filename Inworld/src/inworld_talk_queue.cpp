@@ -14,7 +14,7 @@ void InworldTalkQueue::_bind_methods() {
 }
 
 InworldTalkQueue::InworldTalkQueue() :
-		Object() {
+		Object{} {
 }
 
 InworldTalkQueue::~InworldTalkQueue() {

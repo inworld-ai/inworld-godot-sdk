@@ -11,6 +11,7 @@
 
 namespace godot {
 class InworldPacketHandler;
+class InworldPlayer;
 
 class InworldSession : public Node {
 	GDCLASS(InworldSession, Node);
@@ -30,6 +31,7 @@ public:
 	};
 
 private:
+	InworldPlayer *player;
 	String scene;
 	String auth;
 	bool established;
@@ -46,6 +48,8 @@ public:
 
 	ConnectionState get_connection_state() const;
 	bool get_established() const;
+
+	String get_name(String p_brain) const;
 
 	void send_text(String p_brain, String p_text);
 	void send_trigger(String p_brain, String p_name, Dictionary p_params);
@@ -67,6 +71,8 @@ public:
 #undef DECLARE_CONNECT_EVENTS
 
 private:
+	void set_player(InworldPlayer *p_player);
+	InworldPlayer *get_player() const;
 	void set_scene(String p_scene);
 	String get_scene() const;
 	void set_auth(String p_auth);
@@ -75,7 +81,7 @@ private:
 private:
 	Inworld::Client client;
 	InworldPacketHandler *packet_handler;
-	std::unordered_map<std::string, Inworld::AgentInfo> agent_info_map;
+	mutable std::unordered_map<std::string, Inworld::AgentInfo> agent_info_map;
 };
 
 } // namespace godot

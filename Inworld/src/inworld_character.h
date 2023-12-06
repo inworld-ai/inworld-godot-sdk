@@ -31,6 +31,8 @@ public:
 	void set_brain(String p_brain);
 	String get_brain() const;
 
+	String get_name() const;
+
 	void set_session(InworldSession *p_session);
 	InworldSession *get_session() const;
 

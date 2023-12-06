@@ -20,7 +20,7 @@ void InworldMicrophone::_bind_methods() {
 }
 
 InworldMicrophone::InworldMicrophone() :
-		Object(), capture_device(nullptr) {
+		Object{}, capture_device{ nullptr } {
 	capture_device = new ma_device;
 	ma_device_config device_config;
 	device_config = ma_device_config_init(ma_device_type_capture);
