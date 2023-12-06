@@ -26,7 +26,7 @@ grow_horizontal = 1
 grow_vertical = 0
 
 [node name="TextOutput" parent="." instance=ExtResource("3_8p7bn")]
-custom_minimum_size = Vector2(0, 560)
+custom_minimum_size = Vector2(2.08165e-12, 100)
 layout_mode = 1
 anchors_preset = 10
 anchor_bottom = 0.0
