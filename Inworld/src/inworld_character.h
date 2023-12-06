@@ -33,16 +33,15 @@ public:
 
 	void send_text(String p_text);
 	void send_trigger(String p_name, Dictionary p_params);
+	void start_audio_session();
+	void stop_audio_session();
+	void send_audio(PackedByteArray data);
 
 	void on_event_text(Ref<InworldEventText> p_event_text);
 	void on_event_audio(Ref<InworldEventDataAudio> p_event_audio);
 	void on_event_emotion(Ref<InworldEventEmotion> p_event_emotion);
 	void on_event_trigger(Ref<InworldEventTrigger> p_event_trigger);
 	void on_event_control(Ref<InworldEventControl> p_event_control);
-
-	void start_audio_session();
-	void stop_audio_session();
-	void send_audio(PackedVector2Array data);
 
 private:
 	void bind_brain_to_session();

@@ -6,8 +6,6 @@
 
 #include <godot_cpp/core/class_db.hpp>
 
-#include <godot_cpp/variant/utility_functions.hpp>
-
 using namespace godot;
 
 void InworldCharacter::_bind_methods() {
@@ -22,10 +20,10 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("on_session_established", "established"), &InworldCharacter::on_session_established);
 
 	ClassDB::bind_method(D_METHOD("send_text", "text"), &InworldCharacter::send_text);
+	ClassDB::bind_method(D_METHOD("send_trigger", "text", "params"), &InworldCharacter::send_trigger);
 	ClassDB::bind_method(D_METHOD("start_audio_session"), &InworldCharacter::start_audio_session);
 	ClassDB::bind_method(D_METHOD("stop_audio_session"), &InworldCharacter::stop_audio_session);
 	ClassDB::bind_method(D_METHOD("send_audio", "data"), &InworldCharacter::send_audio);
-	ClassDB::bind_method(D_METHOD("send_trigger", "text", "params"), &InworldCharacter::send_trigger);
 
 	ClassDB::bind_method(D_METHOD("on_event_text", "text"), &InworldCharacter::on_event_text);
 	ClassDB::bind_method(D_METHOD("on_event_audio", "audio"), &InworldCharacter::on_event_audio);
@@ -67,6 +65,20 @@ InworldSession *InworldCharacter::get_session() const {
 	return session;
 }
 
+void InworldCharacter::send_text(String p_text) {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return;
+	}
+	session->send_text(brain, p_text);
+}
+
+void InworldCharacter::send_trigger(String p_name, Dictionary p_params) {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return;
+	}
+	session->send_trigger(brain, p_name, p_params);
+}
+
 void InworldCharacter::start_audio_session() {
 	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
 		return;
@@ -81,38 +93,11 @@ void InworldCharacter::stop_audio_session() {
 	session->stop_audio_session(brain);
 }
 
-void InworldCharacter::send_audio(PackedVector2Array data) {
+void InworldCharacter::send_audio(PackedByteArray p_data) {
 	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
 		return;
 	}
-	std::vector<int16_t> vec;
-	vec.resize(data.size());
-	for (int i = 0; i < data.size(); i++) {
-		UtilityFunctions::print(String(std::to_string(data[i].x).c_str()));
-		int16_t curr_val = int((data[i].x + 1.0) * 32768) - 1;
-		UtilityFunctions::print(String(std::to_string(curr_val).c_str()));
-		vec[i] = curr_val;
-		// UtilityFunctions::print(String(std::to_string(curr).c_str()));
-	}
-	std::string buf;
-	buf.resize(2 * vec.size());
-	memcpy(buf.data(), vec.data(), vec.size());
-	// UtilityFunctions::print(String(buf.c_str()));
-	session->send_audio(brain, buf);
-}
-
-void InworldCharacter::send_text(String p_text) {
-	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
-		return;
-	}
-	session->send_text(brain, p_text);
-}
-
-void InworldCharacter::send_trigger(String p_name, Dictionary p_params) {
-	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
-		return;
-	}
-	session->send_trigger(brain, p_name, p_params);
+	session->send_audio(brain, p_data);
 }
 
 void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {
@@ -128,6 +113,7 @@ void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {
 
 		message_stt->text = p_event_text->text;
 		message_stt->complete = p_event_text->complete;
+		emit_signal("message_stt", message_stt);
 	}
 }
 
