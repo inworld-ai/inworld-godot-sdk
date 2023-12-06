@@ -14,7 +14,8 @@ inworld_character = NodePath("../InworldCharacter")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Interface"]
 
-[node name="InworldSession" type="InworldSession" parent="."]
+[node name="InworldSession" type="InworldSession" parent="." node_paths=PackedStringArray("player")]
+player = NodePath("../InworldPlayer")
 scene = "workspaces/godot/scenes/godot"
 auth = "NElaNFhqTkVTU2tzNG1QSHVPcUQyS1ZHZlg5ZWk0MzQ6MHlqbXV5VGVpY2s4YUM5OVhLR1doTE5VaThFMnRjWXBTZDd4YTJVYTJuV1hZd0oyTnpLaFpyTXI5c0llYlF0Uw=="
 script = ExtResource("2_yrq8l")
@@ -27,7 +28,6 @@ talk_queue = Object(InworldTalkQueue,"script":null)
 
 [node name="InworldPlayer" type="InworldPlayer" parent="." node_paths=PackedStringArray("target_character")]
 target_character = NodePath("../InworldCharacter")
-talking = true
 
 [connection signal="finished" from="Interface/AudioStreamPlayer" to="Interface" method="_on_audio_stream_player_finished"]
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]

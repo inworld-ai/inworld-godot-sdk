@@ -9,6 +9,10 @@
 using namespace godot;
 
 void InworldPlayer::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_name", "name"), &InworldPlayer::set_name);
+	ClassDB::bind_method(D_METHOD("get_name"), &InworldPlayer::get_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
+
 	ClassDB::bind_method(D_METHOD("set_target_character", "target_character"), &InworldPlayer::set_target_character);
 	ClassDB::bind_method(D_METHOD("get_target_character"), &InworldPlayer::get_target_character);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "target_character", PROPERTY_HINT_NODE_TYPE, "InworldCharacter"), "set_target_character", "get_target_character");
@@ -19,7 +23,7 @@ void InworldPlayer::_bind_methods() {
 }
 
 InworldPlayer::InworldPlayer() :
-		Node(), target_character(nullptr), microphone(nullptr) {
+		Node{}, name{ "Player" }, target_character{ nullptr }, microphone{ nullptr }, talking{ false } {
 	microphone = memnew(InworldMicrophone);
 }
 
@@ -40,6 +44,14 @@ void InworldPlayer::_process(double_t delta) {
 		microphone->audio_buffer.read(to_send.ptrw(), SEND_SIZE);
 		target_character->send_audio(to_send);
 	}
+}
+
+void InworldPlayer::set_name(String p_name) {
+	name = p_name;
+}
+
+String InworldPlayer::get_name() const {
+	return name;
 }
 
 void InworldPlayer::set_target_character(InworldCharacter *p_target_character) {

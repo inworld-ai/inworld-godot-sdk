@@ -13,6 +13,9 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_brain"), &InworldCharacter::get_brain);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "brain"), "set_brain", "get_brain");
 
+	ClassDB::bind_method(D_METHOD("get_name"), &InworldCharacter::get_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "", "get_name");
+
 	ClassDB::bind_method(D_METHOD("set_session", "session"), &InworldCharacter::set_session);
 	ClassDB::bind_method(D_METHOD("get_session"), &InworldCharacter::get_session);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "session", PROPERTY_HINT_NODE_TYPE, "InworldSession"), "set_session", "get_session");
@@ -45,7 +48,7 @@ void InworldCharacter::_bind_methods() {
 }
 
 InworldCharacter::InworldCharacter() :
-		Node(), brain(), session(nullptr), talk_queue(nullptr) {
+		Node{}, brain{}, session{ nullptr }, talk_queue{ nullptr } {
 	talk_queue = memnew(InworldTalkQueue);
 	talk_queue->connect("next_ready", Callable(this, "on_talk_queue_next_ready"));
 }
@@ -65,6 +68,13 @@ void InworldCharacter::set_brain(String p_brain) {
 
 String InworldCharacter::get_brain() const {
 	return brain;
+}
+
+String InworldCharacter::get_name() const {
+	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+		return {};
+	}
+	return session->get_name(brain);
 }
 
 void InworldCharacter::set_session(InworldSession *p_session) {

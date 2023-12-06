@@ -1,6 +1,7 @@
 #include "inworld_session.h"
 
 #include "inworld_packet_handler.h"
+#include "inworld_player.h"
 
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/os.hpp>
@@ -10,6 +11,10 @@
 using namespace godot;
 
 void InworldSession::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_player", "player"), &InworldSession::set_player);
+	ClassDB::bind_method(D_METHOD("get_player"), &InworldSession::get_player);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "player", PROPERTY_HINT_NODE_TYPE, "InworldPlayer"), "set_player", "get_player");
+
 	ClassDB::bind_method(D_METHOD("set_scene", "scene"), &InworldSession::set_scene);
 	ClassDB::bind_method(D_METHOD("get_scene"), &InworldSession::get_scene);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "scene"), "set_scene", "get_scene");
@@ -37,7 +42,7 @@ void InworldSession::_bind_methods() {
 }
 
 InworldSession::InworldSession() :
-		Node{}, scene{}, auth{}, established{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
+		Node{}, player{ nullptr }, scene{}, auth{}, established{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
 	Inworld::SdkInfo sdk_info{
 		"godot",
 		std::string(((String)Engine::get_singleton()->get_version_info()["string"]).utf8()),
@@ -80,8 +85,8 @@ void InworldSession::start() {
 	Inworld::ClientOptions client_options;
 
 	client_options.ServerUrl = "api-engine.inworld.ai:443";
-	client_options.PlayerName = "Player";
 
+	client_options.PlayerName = player == nullptr ? "Player" : player->get_name().utf8().get_data();
 	client_options.SceneName = scene.utf8().get_data();
 	client_options.Base64 = auth.utf8().get_data();
 
@@ -145,17 +150,8 @@ bool InworldSession::get_established() const {
 	return established;
 }
 
-void InworldSession::start_audio_session(String p_brain) {
-	client.StartAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
-}
-
-void InworldSession::stop_audio_session(String p_brain) {
-	client.StopAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
-}
-
-void InworldSession::send_audio(String p_brain, PackedByteArray &p_data) {
-	std::string data((char *)p_data.ptrw(), p_data.size());
-	client.SendSoundMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, data);
+String InworldSession::get_name(String p_brain) const {
+	return String(agent_info_map[p_brain.utf8().get_data()].GivenName.c_str());
 }
 
 void InworldSession::send_text(String p_brain, String p_text) {
@@ -170,6 +166,19 @@ void InworldSession::send_trigger(String p_brain, String p_name, Dictionary p_pa
 		map[key.utf8().get_data()] = value.utf8().get_data();
 	}
 	client.SendCustomEvent(agent_info_map[p_brain.utf8().get_data()].AgentId, p_name.utf8().get_data(), map);
+}
+
+void InworldSession::start_audio_session(String p_brain) {
+	client.StartAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
+}
+
+void InworldSession::stop_audio_session(String p_brain) {
+	client.StopAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
+}
+
+void InworldSession::send_audio(String p_brain, PackedByteArray &p_data) {
+	std::string data((char *)p_data.ptrw(), p_data.size());
+	client.SendSoundMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, data);
 }
 
 #define DEFINE_CONNECT_EVENTS(Type)                                                                                 \
@@ -200,6 +209,14 @@ DEFINE_CONNECT_EVENTS(trigger)
 DEFINE_CONNECT_EVENTS(control)
 
 #undef DEFINE_CONNECT_EVENTS
+
+void InworldSession::set_player(InworldPlayer *p_player) {
+	player = p_player;
+}
+
+InworldPlayer *InworldSession::get_player() const {
+	return player;
+}
 
 void InworldSession::set_scene(String p_scene) {
 	scene = p_scene;
