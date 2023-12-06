@@ -17,6 +17,7 @@ protected:
 private:
 	InworldCharacter *target_character;
 	InworldMicrophone *microphone;
+	bool talking;
 
 public:
 	InworldPlayer();
@@ -29,6 +30,10 @@ public:
 
 	void set_talking(bool p_talking);
 	bool get_talking() const;
+
+private:
+	void _start_talk_to_target();
+	void _stop_talk_to_target();
 };
 
 } // namespace godot

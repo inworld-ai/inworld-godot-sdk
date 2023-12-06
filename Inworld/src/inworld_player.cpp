@@ -43,7 +43,13 @@ void InworldPlayer::_process(double_t delta) {
 }
 
 void InworldPlayer::set_target_character(InworldCharacter *p_target_character) {
+	if (talking) {
+		_stop_talk_to_target();
+	}
 	target_character = p_target_character;
+	if (talking) {
+		_start_talk_to_target();
+	}
 }
 
 InworldCharacter *InworldPlayer::get_target_character() const {
@@ -51,14 +57,31 @@ InworldCharacter *InworldPlayer::get_target_character() const {
 }
 
 void InworldPlayer::set_talking(bool p_talking) {
-	if (microphone->get_hot() == p_talking) {
+	if (talking == p_talking) {
 		return;
 	}
-	p_talking ? target_character->start_audio_session() : target_character->stop_audio_session();
-	microphone->set_hot(p_talking);
-	set_process(p_talking);
+	talking = p_talking;
+	p_talking ? _start_talk_to_target() : _stop_talk_to_target();
 }
 
 bool InworldPlayer::get_talking() const {
-	return microphone->get_hot();
+	return talking;
+}
+
+void InworldPlayer::_start_talk_to_target() {
+	if (target_character == nullptr) {
+		return;
+	}
+	target_character->start_audio_session();
+	microphone->set_hot(true);
+	set_process(true);
+}
+
+void InworldPlayer::_stop_talk_to_target() {
+	if (target_character == nullptr) {
+		return;
+	}
+	target_character->stop_audio_session();
+	microphone->set_hot(false);
+	set_process(false);
 }
