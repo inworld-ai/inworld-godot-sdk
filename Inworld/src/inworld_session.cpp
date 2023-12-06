@@ -86,7 +86,7 @@ void InworldSession::start() {
 
 	client_options.ServerUrl = "api-engine.inworld.ai:443";
 
-	client_options.PlayerName = player == nullptr ? "Name" : player->get_name().utf8().get_data();
+	client_options.PlayerName = player == nullptr ? "Player" : player->get_name().utf8().get_data();
 	client_options.SceneName = scene.utf8().get_data();
 	client_options.Base64 = auth.utf8().get_data();
 
