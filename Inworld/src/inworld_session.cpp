@@ -6,7 +6,6 @@
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
@@ -29,6 +28,9 @@ void InworldSession::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_connection_state"), &InworldSession::get_connection_state);
 	ADD_SIGNAL(MethodInfo("connection_state_changed", PropertyInfo(Variant::INT, "connection_state")));
 
+	ClassDB::bind_method(D_METHOD("get_connected"), &InworldSession::get_connected);
+	ADD_SIGNAL(MethodInfo("connected", PropertyInfo(Variant::BOOL, "connected")));
+
 	ClassDB::bind_method(D_METHOD("get_established"), &InworldSession::get_established);
 	ADD_SIGNAL(MethodInfo("established", PropertyInfo(Variant::BOOL, "established")));
 
@@ -42,7 +44,7 @@ void InworldSession::_bind_methods() {
 }
 
 InworldSession::InworldSession() :
-		Node{}, player{ nullptr }, scene{}, auth{}, established{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
+		Node{}, player{ nullptr }, scene{}, auth{}, established{ false }, connected{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
 	Inworld::SdkInfo sdk_info{
 		"godot",
 		std::string(((String)Engine::get_singleton()->get_version_info()["string"]).utf8()),
@@ -57,6 +59,12 @@ InworldSession::InworldSession() :
 				set_process(connection_state != ConnectionState::IDLE);
 
 				emit_signal("connection_state_changed", connection_state);
+
+				const bool new_connected = connection_state == ConnectionState::CONNECTED;
+				if (connected != new_connected) {
+					connected = new_connected;
+					emit_signal("connected", connected);
+				}
 
 				if (connection_state == ConnectionState::DISCONNECTED) {
 					client.ResumeClient();
@@ -129,10 +137,10 @@ void InworldSession::start() {
 }
 
 void InworldSession::stop() {
-	client.StopClient();
-
 	established = false;
 	emit_signal("established", established);
+
+	client.StopClient();
 
 	if (packet_handler != nullptr) {
 		memdelete(packet_handler);
@@ -144,6 +152,10 @@ void InworldSession::stop() {
 
 InworldSession::ConnectionState InworldSession::get_connection_state() const {
 	return (InworldSession::ConnectionState)client.GetConnectionState();
+}
+
+bool InworldSession::get_connected() const {
+	return get_connection_state() == InworldSession::ConnectionState::CONNECTED;
 }
 
 bool InworldSession::get_established() const {

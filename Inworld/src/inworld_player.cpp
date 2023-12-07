@@ -2,6 +2,7 @@
 
 #include "inworld_character.h"
 #include "inworld_microphone.h"
+#include "inworld_session.h"
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>

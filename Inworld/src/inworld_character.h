@@ -23,6 +23,7 @@ private:
 	String brain;
 	InworldSession *session;
 	InworldTalkQueue *talk_queue;
+	bool wants_audio_session;
 
 public:
 	InworldCharacter();
@@ -57,6 +58,7 @@ private:
 	void bind_brain_to_session();
 	void unbind_brain_from_session();
 	void on_session_established(bool p_established);
+	void on_session_connected(bool p_connected);
 };
 
 } // namespace godot

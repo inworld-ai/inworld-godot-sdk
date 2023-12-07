@@ -21,6 +21,7 @@ void InworldCharacter::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "session", PROPERTY_HINT_NODE_TYPE, "InworldSession"), "set_session", "get_session");
 
 	ClassDB::bind_method(D_METHOD("on_session_established", "established"), &InworldCharacter::on_session_established);
+	ClassDB::bind_method(D_METHOD("on_session_connected", "connected"), &InworldCharacter::on_session_connected);
 
 	ClassDB::bind_method(D_METHOD("send_text", "text"), &InworldCharacter::send_text);
 	ClassDB::bind_method(D_METHOD("send_trigger", "text", "params"), &InworldCharacter::send_trigger);
@@ -50,7 +51,7 @@ void InworldCharacter::_bind_methods() {
 }
 
 InworldCharacter::InworldCharacter() :
-		Node{}, brain{}, session{ nullptr }, talk_queue{ nullptr } {
+		Node{}, brain{}, session{ nullptr }, talk_queue{ nullptr }, wants_audio_session{ false } {
 	talk_queue = memnew(InworldTalkQueue);
 	talk_queue->connect("next_ready", Callable(this, "on_talk_queue_next_ready"));
 	talk_queue->connect("next_popped", Callable(this, "on_talk_queue_next_popped"));
@@ -74,7 +75,7 @@ String InworldCharacter::get_brain() const {
 }
 
 String InworldCharacter::get_name() const {
-	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+	if (session == nullptr || !session->get_connected()) {
 		return {};
 	}
 	return session->get_name(brain);
@@ -95,35 +96,37 @@ InworldTalkQueue *InworldCharacter::get_talk_queue() const {
 }
 
 void InworldCharacter::send_text(String p_text) {
-	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+	if (session == nullptr || !session->get_connected()) {
 		return;
 	}
 	session->send_text(brain, p_text);
 }
 
 void InworldCharacter::send_trigger(String p_name, Dictionary p_params) {
-	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+	if (session == nullptr || !session->get_connected()) {
 		return;
 	}
 	session->send_trigger(brain, p_name, p_params);
 }
 
 void InworldCharacter::start_audio_session() {
-	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+	wants_audio_session = true;
+	if (session == nullptr || !session->get_connected()) {
 		return;
 	}
 	session->start_audio_session(brain);
 }
 
 void InworldCharacter::stop_audio_session() {
-	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+	wants_audio_session = false;
+	if (session == nullptr || !session->get_connected()) {
 		return;
 	}
 	session->stop_audio_session(brain);
 }
 
 void InworldCharacter::send_audio(PackedByteArray p_data) {
-	if (session == nullptr || session->get_connection_state() != InworldSession::ConnectionState::CONNECTED) {
+	if (session == nullptr || !session->get_connected()) {
 		return;
 	}
 	session->send_audio(brain, p_data);
@@ -189,6 +192,9 @@ void InworldCharacter::bind_brain_to_session() {
 	}
 	session->connect("established", Callable(this, "on_session_established"));
 	on_session_established(session->get_established());
+
+	session->connect("connected", Callable(this, "on_session_connected"));
+	on_session_connected(session->get_connected());
 }
 
 void InworldCharacter::unbind_brain_from_session() {
@@ -197,6 +203,9 @@ void InworldCharacter::unbind_brain_from_session() {
 	}
 	session->disconnect("established", Callable(this, "on_session_established"));
 	on_session_established(false);
+
+	session->disconnect("connected", Callable(this, "on_session_connected"));
+	on_session_connected(false);
 }
 
 void InworldCharacter::on_session_established(bool p_established) {
@@ -222,4 +231,11 @@ void InworldCharacter::on_session_established(bool p_established) {
 
 #undef CONNECT_EVENT
 #undef DISCONNECT_EVENT
+
+	if (wants_audio_session) {
+		p_established ? session->start_audio_session(brain) : session->stop_audio_session(brain);
+	}
+}
+
+void InworldCharacter::on_session_connected(bool p_connected) {
 }
