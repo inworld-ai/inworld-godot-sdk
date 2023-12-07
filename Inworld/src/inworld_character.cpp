@@ -144,7 +144,7 @@ void InworldCharacter::interrupt() {
 		}
 		session->cancel_response(brain, interaction_id, utterance_ids);
 		talk_queue->clear();
-		emit_signal("interrupt");
+		emit_signal("interrupted");
 	}
 }
 
