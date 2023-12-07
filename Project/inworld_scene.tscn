@@ -27,8 +27,6 @@ script = ExtResource("2_yrq8l")
 [node name="InworldCharacter" type="InworldCharacter" parent="." node_paths=PackedStringArray("session")]
 brain = "workspaces/godot/characters/godot"
 session = NodePath("../InworldSession")
-talk_queue = Object(InworldTalkQueue,"script":null)
-
 
 [node name="InworldPlayer" type="InworldPlayer" parent="." node_paths=PackedStringArray("target_character")]
 target_character = NodePath("../InworldCharacter")
@@ -52,8 +50,9 @@ position = Vector2(100, 400)
 
 [connection signal="finished" from="Interface/AudioStreamPlayer" to="Interface" method="_on_audio_stream_player_finished"]
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
+[connection signal="interrupted" from="InworldCharacter" to="Interface" method="_on_inworld_character_interrupted"]
 [connection signal="message_control" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_control"]
 [connection signal="message_emotion" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_emotion"]
 [connection signal="message_stt" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_stt"]
+[connection signal="message_talk" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_talk"]
 [connection signal="message_trigger" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_trigger"]
-[connection signal="talk_queue_next_ready" from="InworldCharacter" to="Interface" method="_on_inworld_character_talk_queue_next_ready"]

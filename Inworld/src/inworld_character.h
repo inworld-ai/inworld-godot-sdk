@@ -7,6 +7,7 @@
 
 namespace godot {
 class InworldSession;
+class InworldEvent;
 class InworldEventText;
 class InworldEventDataAudio;
 class InworldEventEmotion;
@@ -22,7 +23,11 @@ protected:
 private:
 	String brain;
 	InworldSession *session;
+	Vector<String> pending_interaction_ids;
+	Vector<String> canceled_interaction_ids;
+	String current_voice_interaction_id;
 	InworldTalkQueue *talk_queue;
+	bool wants_audio_session;
 
 public:
 	InworldCharacter();
@@ -36,13 +41,16 @@ public:
 	void set_session(InworldSession *p_session);
 	InworldSession *get_session() const;
 
-	InworldTalkQueue *get_talk_queue() const;
-
 	void send_text(String p_text);
 	void send_trigger(String p_name, Dictionary p_params);
 	void start_audio_session();
 	void stop_audio_session();
-	void send_audio(PackedByteArray data);
+	void send_audio(PackedByteArray p_data);
+
+	void interrupt();
+
+	void _on_event(InworldEvent *p_event);
+	bool _is_event_canceled(InworldEvent *p_event);
 
 	void on_event_text(Ref<InworldEventText> p_event_text);
 	void on_event_audio(Ref<InworldEventDataAudio> p_event_audio);
@@ -51,11 +59,13 @@ public:
 	void on_event_control(Ref<InworldEventControl> p_event_control);
 
 private:
-	void on_talk_queue_next_ready();
+	void finish_current_message_talk();
+	void on_talk_queue_next_ready(Ref<InworldMessageTalk> p_message_talk);
 
 	void bind_brain_to_session();
 	void unbind_brain_from_session();
 	void on_session_established(bool p_established);
+	void on_session_connected(bool p_connected);
 };
 
 } // namespace godot

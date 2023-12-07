@@ -15,24 +15,28 @@ protected:
 	static void _bind_methods();
 
 private:
-	Vector<String> utterances;
-	Vector<String> ready_utterances;
-	Dictionary utterance_to_talk;
+	Vector<String> utterance_ids;
+	Dictionary utterance_id_to_talk;
+
+	Ref<InworldMessageTalk> current_talk;
 
 public:
 	InworldTalkQueue();
 	~InworldTalkQueue();
 
 public:
-	void update_text(String p_utterance_id, String p_text);
-	void update_chunk(String p_utterance_id, PackedByteArray p_chunk);
+	Vector<Ref<InworldMessageTalk>> InworldTalkQueue::get_talks();
 
-	bool is_next_ready() const;
-	Ref<InworldMessageTalk> pop_ready();
+	void update_text(String p_interaction_id, String p_utterance_id, String p_text);
+	void update_chunk(String p_interaction_id, String p_utterance_id, PackedByteArray p_chunk);
+
+	void finish_current();
+
+	void clear();
 
 private:
-	void _check_talk_ready(String p_utterance_id);
-	Ref<InworldMessageTalk> _find_or_create(String utterance_id);
+	void _check_next_ready();
+	Ref<InworldMessageTalk> _find_or_create(String p_interaction_id, String utterance_id);
 };
 
 } // namespace godot
