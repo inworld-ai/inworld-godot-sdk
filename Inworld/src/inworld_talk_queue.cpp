@@ -29,13 +29,13 @@ Vector<Ref<InworldMessageTalk>> InworldTalkQueue::get_talks() {
 	return talks;
 }
 
-void InworldTalkQueue::update_text(String p_utterance_id, String p_text) {
-	_find_or_create(p_utterance_id)->text = p_text;
+void InworldTalkQueue::update_text(String p_interaction_id, String p_utterance_id, String p_text) {
+	_find_or_create(p_interaction_id, p_utterance_id)->text = p_text;
 	_check_next_ready();
 }
 
-void InworldTalkQueue::update_chunk(String p_utterance_id, PackedByteArray p_chunk) {
-	_find_or_create(p_utterance_id)->chunk = p_chunk;
+void InworldTalkQueue::update_chunk(String p_interaction_id, String p_utterance_id, PackedByteArray p_chunk) {
+	_find_or_create(p_interaction_id, p_utterance_id)->chunk = p_chunk;
 	_check_next_ready();
 }
 
@@ -66,12 +66,15 @@ void InworldTalkQueue::_check_next_ready() {
 	}
 }
 
-Ref<InworldMessageTalk> InworldTalkQueue::_find_or_create(String p_utterance_id) {
+Ref<InworldMessageTalk> InworldTalkQueue::_find_or_create(String p_interaction_id, String p_utterance_id) {
 	Ref<InworldMessageTalk> message_talk;
 	if (utterance_id_to_talk.has(p_utterance_id)) {
 		message_talk = utterance_id_to_talk[p_utterance_id];
 	} else {
 		message_talk.instantiate();
+		message_talk->interaction_id = p_interaction_id;
+		message_talk->utterance_id = p_utterance_id;
+
 		utterance_ids.push_back(p_utterance_id);
 		utterance_id_to_talk[p_utterance_id] = message_talk;
 	}

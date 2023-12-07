@@ -11,13 +11,12 @@ class InworldMessage : public RefCounted {
 protected:
 	static void _bind_methods();
 
-private:
-	String interaction_id;
-	String utterance_id;
-
 public:
 	InworldMessage();
 	~InworldMessage();
+
+	String interaction_id;
+	String utterance_id;
 
 	String get_interaction_id() const;
 	String get_utterance_id() const;
