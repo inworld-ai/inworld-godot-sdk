@@ -36,3 +36,6 @@ func _process(delta):
 	
 func set_conversation_partner(character: InworldCharacter):
 	$ConversationPartner.target_character = character
+	
+func clear_conversation_partner():
+	$ConversationPartner.target_character = null

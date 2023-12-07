@@ -7,6 +7,7 @@ var characters = [
 	"wilson",
 	"vik"
 ]
+var current_name: String
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -27,6 +28,11 @@ func _process(delta):
 		dist = player_pos.distance_to(m.position)
 		if dist < max_dist:
 			closest_mob = m
-			
-	$Player.set_conversation_partner(closest_mob.inworld_character)
+			max_dist = dist
+	if max_dist < 150 and (current_name != closest_mob.myName or current_name == null):
+		print("Setting partner to: " + closest_mob.myName)
+		current_name = closest_mob.myName
+		$Player.set_conversation_partner(closest_mob.inworld_character)
+	else:
+		$Player.clear_conversation_partner()
 		
