@@ -31,27 +31,21 @@ func _on_inworld_character_message_control(control : InworldMessageControl):
 
 
 func _on_inworld_character_message_stt(stt : InworldMessageSpeechToText):
-	print(stt.text)
 	if(stt.complete):
 		player_text.emit(stt.text)
-
-
-func _on_inworld_character_talk_queue_next_ready(talk_queue : InworldTalkQueue):
-	if(!talking):
-		play_message_talk(talk_queue.pop_ready())
 	
 
 func _on_audio_stream_player_finished():
-	talking = false;
-	if(inworld_character.talk_queue.is_next_ready()):
-		play_message_talk(inworld_character.talk_queue.pop_ready())
+	inworld_character.finish_current_message_talk()
 
-func play_message_talk(talk : InworldMessageTalk):
+
+func _on_inworld_character_message_talk(talk):
 	if(!talk.text.is_empty()):
 		character_text.emit(talk.text)
 	if(!talk.chunk.is_empty()):
 		talking = true;
 		var audio_wav = AudioStreamWAV.new()
+		talk.chunk.decode_u16(0)
 		audio_wav.data = talk.chunk;
 		audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
 		audio_wav.mix_rate = 16000;

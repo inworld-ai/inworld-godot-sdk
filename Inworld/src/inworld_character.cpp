@@ -37,11 +37,8 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("on_event_trigger", "trigger"), &InworldCharacter::on_event_trigger);
 	ClassDB::bind_method(D_METHOD("on_event_control", "control"), &InworldCharacter::on_event_control);
 
-	ClassDB::bind_method(D_METHOD("get_talk_queue"), &InworldCharacter::get_talk_queue);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "talk_queue"), "", "get_talk_queue");
-
-	ClassDB::bind_method(D_METHOD("on_talk_queue_next_ready"), &InworldCharacter::on_talk_queue_next_ready);
-	ClassDB::bind_method(D_METHOD("on_talk_queue_next_popped"), &InworldCharacter::on_talk_queue_next_popped);
+	ClassDB::bind_method(D_METHOD("finish_current_message_talk"), &InworldCharacter::finish_current_message_talk);
+	ClassDB::bind_method(D_METHOD("on_talk_queue_next_talk_ready"), &InworldCharacter::on_talk_queue_next_talk_ready);
 
 	ADD_SIGNAL(MethodInfo("message_talk", PropertyInfo(Variant::OBJECT, "talk")));
 	ADD_SIGNAL(MethodInfo("message_stt", PropertyInfo(Variant::OBJECT, "stt")));
@@ -49,16 +46,13 @@ void InworldCharacter::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("message_trigger", PropertyInfo(Variant::OBJECT, "trigger")));
 	ADD_SIGNAL(MethodInfo("message_control", PropertyInfo(Variant::OBJECT, "control")));
 
-	ADD_SIGNAL(MethodInfo("talk_queue_next_ready", PropertyInfo(Variant::OBJECT, "talk_queue")));
-
 	ADD_SIGNAL(MethodInfo("interrupted"));
 }
 
 InworldCharacter::InworldCharacter() :
 		Node{}, brain{}, session{ nullptr }, talk_queue{ nullptr }, wants_audio_session{ false } {
 	talk_queue = memnew(InworldTalkQueue);
-	talk_queue->connect("next_ready", Callable(this, "on_talk_queue_next_ready"));
-	talk_queue->connect("next_popped", Callable(this, "on_talk_queue_next_popped"));
+	talk_queue->connect("next_talk_ready", Callable(this, "on_talk_queue_next_talk_ready"));
 }
 
 InworldCharacter::~InworldCharacter() {
@@ -93,10 +87,6 @@ void InworldCharacter::set_session(InworldSession *p_session) {
 
 InworldSession *InworldCharacter::get_session() const {
 	return session;
-}
-
-InworldTalkQueue *InworldCharacter::get_talk_queue() const {
-	return talk_queue;
 }
 
 void InworldCharacter::send_text(String p_text) {
@@ -243,11 +233,11 @@ void InworldCharacter::on_event_control(Ref<InworldEventControl> p_event_control
 	emit_signal("message_control", message_control);
 }
 
-void InworldCharacter::on_talk_queue_next_ready() {
-	emit_signal("talk_queue_next_ready", talk_queue);
+void InworldCharacter::finish_current_message_talk() {
+	talk_queue->finish_current();
 }
 
-void InworldCharacter::on_talk_queue_next_popped(Ref<InworldMessageTalk> p_message_talk) {
+void InworldCharacter::on_talk_queue_next_talk_ready(Ref<InworldMessageTalk> p_message_talk) {
 	emit_signal("message_talk", p_message_talk);
 }
 

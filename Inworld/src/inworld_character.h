@@ -39,8 +39,6 @@ public:
 	void set_session(InworldSession *p_session);
 	InworldSession *get_session() const;
 
-	InworldTalkQueue *get_talk_queue() const;
-
 	void send_text(String p_text);
 	void send_trigger(String p_name, Dictionary p_params);
 	void start_audio_session();
@@ -59,8 +57,8 @@ public:
 	void on_event_control(Ref<InworldEventControl> p_event_control);
 
 private:
-	void on_talk_queue_next_ready();
-	void on_talk_queue_next_popped(Ref<InworldMessageTalk> p_message_talk);
+	void finish_current_message_talk();
+	void on_talk_queue_next_talk_ready(Ref<InworldMessageTalk> p_message_talk);
 
 	void bind_brain_to_session();
 	void unbind_brain_from_session();
