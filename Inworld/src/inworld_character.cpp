@@ -29,6 +29,8 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("stop_audio_session"), &InworldCharacter::stop_audio_session);
 	ClassDB::bind_method(D_METHOD("send_audio", "data"), &InworldCharacter::send_audio);
 
+	ClassDB::bind_method(D_METHOD("interrupt"), &InworldCharacter::interrupt);
+
 	ClassDB::bind_method(D_METHOD("on_event_text", "text"), &InworldCharacter::on_event_text);
 	ClassDB::bind_method(D_METHOD("on_event_audio", "audio"), &InworldCharacter::on_event_audio);
 	ClassDB::bind_method(D_METHOD("on_event_emotion", "emotion"), &InworldCharacter::on_event_emotion);
@@ -48,6 +50,8 @@ void InworldCharacter::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("message_control", PropertyInfo(Variant::OBJECT, "control")));
 
 	ADD_SIGNAL(MethodInfo("talk_queue_next_ready", PropertyInfo(Variant::OBJECT, "talk_queue")));
+
+	ADD_SIGNAL(MethodInfo("interrupted"));
 }
 
 InworldCharacter::InworldCharacter() :
@@ -99,6 +103,7 @@ void InworldCharacter::send_text(String p_text) {
 	if (session == nullptr || !session->get_connected()) {
 		return;
 	}
+	interrupt();
 	session->send_text(brain, p_text);
 }
 
@@ -132,10 +137,54 @@ void InworldCharacter::send_audio(PackedByteArray p_data) {
 	session->send_audio(brain, p_data);
 }
 
+void InworldCharacter::interrupt() {
+	canceled_interaction_ids.append_array(pending_interaction_ids);
+	pending_interaction_ids.clear();
+
+	Vector<String> pending_interaction_ids_copy = pending_interaction_ids;
+	bool interrupted = false;
+	for (const String &pending_interaction_id : pending_interaction_ids_copy) {
+		interrupt_interaction(pending_interaction_id);
+		interrupted = true;
+	}
+	if (interrupted) {
+		emit_signal("interrupted");
+	}
+}
+
+void InworldCharacter::interrupt_interaction(String p_interaction_id) {
+	Vector<String> utterance_ids = talk_queue->interrupt_interaction(p_interaction_id);
+	session->cancel_response(brain, p_interaction_id, utterance_ids);
+	pending_interaction_ids.erase(p_interaction_id);
+	canceled_interaction_ids.push_back(p_interaction_id);
+}
+
+void InworldCharacter::_on_event(InworldEvent *p_event) {
+	const String interaction_id = p_event->get_interaction_id();
+	if (!canceled_interaction_ids.has(interaction_id) && !pending_interaction_ids.has(interaction_id)) {
+		pending_interaction_ids.push_back(interaction_id);
+	}
+}
+
+bool InworldCharacter::_is_event_canceled(InworldEvent *p_event) {
+	const String interaction_id = p_event->get_interaction_id();
+	return canceled_interaction_ids.has(interaction_id);
+}
+
 void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {
+	_on_event(p_event_text.ptr());
+	if (_is_event_canceled(p_event_text.ptr())) {
+		return;
+	}
+
 	if (p_event_text->get_source_actor_type() == StringName("Agent")) {
 		talk_queue->update_text(p_event_text->get_utterance_id(), p_event_text->text);
 	} else {
+		const String interaction_id = p_event_text->get_interaction_id();
+		interrupt();
+		canceled_interaction_ids.erase(interaction_id);
+		pending_interaction_ids = { interaction_id };
+
 		Ref<InworldMessageSpeechToText> message_stt;
 		message_stt.instantiate();
 
@@ -146,10 +195,17 @@ void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {
 }
 
 void InworldCharacter::on_event_audio(Ref<InworldEventDataAudio> p_event_audio) {
+	_on_event(p_event_audio.ptr());
+	if (_is_event_canceled(p_event_audio.ptr())) {
+		return;
+	}
+
 	talk_queue->update_chunk(p_event_audio->get_utterance_id(), p_event_audio->chunk);
 }
 
 void InworldCharacter::on_event_emotion(Ref<InworldEventEmotion> p_event_emotion) {
+	_on_event(p_event_emotion.ptr());
+
 	Ref<InworldMessageEmotion> message_emotion;
 	message_emotion.instantiate();
 
@@ -160,6 +216,8 @@ void InworldCharacter::on_event_emotion(Ref<InworldEventEmotion> p_event_emotion
 }
 
 void InworldCharacter::on_event_trigger(Ref<InworldEventTrigger> p_event_trigger) {
+	_on_event(p_event_trigger.ptr());
+
 	Ref<InworldMessageTrigger> message_trigger;
 	message_trigger.instantiate();
 
@@ -170,6 +228,13 @@ void InworldCharacter::on_event_trigger(Ref<InworldEventTrigger> p_event_trigger
 }
 
 void InworldCharacter::on_event_control(Ref<InworldEventControl> p_event_control) {
+	_on_event(p_event_control.ptr());
+
+	if (p_event_control->type == String("InteractionEnd")) {
+		pending_interaction_ids.erase(p_event_control->get_interaction_id());
+		canceled_interaction_ids.erase(p_event_control->get_interaction_id());
+	}
+
 	Ref<InworldMessageControl> message_control;
 	message_control.instantiate();
 

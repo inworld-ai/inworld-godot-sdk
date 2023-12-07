@@ -22,6 +22,8 @@ protected:
 private:
 	String brain;
 	InworldSession *session;
+	Vector<String> pending_interaction_ids;
+	Vector<String> canceled_interaction_ids;
 	InworldTalkQueue *talk_queue;
 	bool wants_audio_session;
 
@@ -43,7 +45,12 @@ public:
 	void send_trigger(String p_name, Dictionary p_params);
 	void start_audio_session();
 	void stop_audio_session();
-	void send_audio(PackedByteArray data);
+	void send_audio(PackedByteArray p_data);
+
+	void interrupt();
+
+	void _on_event(InworldEvent *p_event);
+	bool _is_event_canceled(InworldEvent *p_event);
 
 	void on_event_text(Ref<InworldEventText> p_event_text);
 	void on_event_audio(Ref<InworldEventDataAudio> p_event_audio);

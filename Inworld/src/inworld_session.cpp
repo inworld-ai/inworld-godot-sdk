@@ -193,6 +193,14 @@ void InworldSession::send_audio(String p_brain, PackedByteArray &p_data) {
 	client.SendSoundMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, data);
 }
 
+void InworldSession::cancel_response(String p_brain, String p_interaction_id, Vector<String> p_utterance_ids) {
+	std::vector<std::string> utterance_ids;
+	for (const String &utterance_id : p_utterance_ids) {
+		utterance_ids.push_back(utterance_id.utf8().get_data());
+	}
+	client.CancelResponse(agent_info_map[p_brain.utf8().get_data()].AgentId, p_interaction_id.utf8().get_data(), utterance_ids);
+}
+
 #define DEFINE_CONNECT_EVENTS(Type)                                                                                 \
 	void InworldSession::connect_##Type##_events(String p_brain, const Callable &p_callable, uint32_t p_flags) {    \
 		if (packet_handler == nullptr) {                                                                            \
