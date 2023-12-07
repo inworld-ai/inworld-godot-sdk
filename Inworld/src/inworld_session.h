@@ -34,6 +34,7 @@ private:
 	InworldPlayer *player;
 	String scene;
 	String auth;
+	bool connected;
 	bool established;
 
 public:
@@ -47,6 +48,7 @@ public:
 	void stop();
 
 	ConnectionState get_connection_state() const;
+	bool get_connected() const;
 	bool get_established() const;
 
 	String get_name(String p_brain) const;
