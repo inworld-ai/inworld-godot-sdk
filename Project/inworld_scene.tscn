@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Root.gd" id="1_iuwmo"]
 [ext_resource type="PackedScene" uid="uid://cesm2ftmwtcnp" path="res://interface/interface.tscn" id="2_swbl7"]
-[ext_resource type="Script" path="res://InworldSession.gd" id="2_yrq8l"]
+[ext_resource type="Script" path="res://InworldSession.gd" id="3_2i3g7"]
 [ext_resource type="PackedScene" uid="uid://jvf1fo60ethj" path="res://player.tscn" id="4_tplsn"]
 [ext_resource type="PackedScene" uid="uid://btph3gxfonssl" path="res://mob.tscn" id="5_87lf8"]
 
@@ -22,7 +22,7 @@ inworld_character = NodePath("../InworldCharacter")
 player = NodePath("../InworldPlayer")
 scene = "workspaces/godot/scenes/godot"
 auth = "NElaNFhqTkVTU2tzNG1QSHVPcUQyS1ZHZlg5ZWk0MzQ6MHlqbXV5VGVpY2s4YUM5OVhLR1doTE5VaThFMnRjWXBTZDd4YTJVYTJuV1hZd0oyTnpLaFpyTXI5c0llYlF0Uw=="
-script = ExtResource("2_yrq8l")
+script = ExtResource("3_2i3g7")
 
 [node name="InworldCharacter" type="InworldCharacter" parent="." node_paths=PackedStringArray("session")]
 brain = "workspaces/godot/characters/godot"

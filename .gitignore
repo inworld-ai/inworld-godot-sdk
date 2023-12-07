@@ -20,7 +20,9 @@
 *.idb
 *.exp
 *.dll
-bin
+
+# Git Keep
+!*.gitkeep
 
 # VSCode
 *.code-workspace

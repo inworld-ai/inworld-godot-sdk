@@ -104,14 +104,14 @@ if env["platform"] == "macos":
     
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "project/bin/libinworld.{}.{}.framework/libinworld.{}.{}".format(
+        "project/addons/inworld/bin/libinworld.{}.{}.framework/libinworld.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
     )
 else:
     library = env.SharedLibrary(
-        "project/bin/libinworld{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "project/addons/inworld/bin/libinworld{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 
