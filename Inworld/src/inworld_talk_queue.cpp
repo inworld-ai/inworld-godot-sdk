@@ -8,9 +8,10 @@ using namespace godot;
 
 void InworldTalkQueue::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_next_ready"), &InworldTalkQueue::is_next_ready);
-	ClassDB::bind_method(D_METHOD("pop_ready"), &InworldTalkQueue::pop_ready);
+	ClassDB::bind_method(D_METHOD("pop_next_ready"), &InworldTalkQueue::pop_next_ready);
 
 	ADD_SIGNAL(MethodInfo("next_ready"));
+	ADD_SIGNAL(MethodInfo("next_popped", PropertyInfo(Variant::OBJECT, "talk")));
 }
 
 InworldTalkQueue::InworldTalkQueue() :
@@ -63,13 +64,14 @@ bool InworldTalkQueue::is_next_ready() const {
 	return next->get_ready();
 }
 
-Ref<InworldMessageTalk> InworldTalkQueue::pop_ready() {
+Ref<InworldMessageTalk> InworldTalkQueue::pop_next_ready() {
 	Ref<InworldMessageTalk> message_talk;
 	if (is_next_ready()) {
 		message_talk = utterance_to_talk[utterances[0]];
 		utterance_to_talk.erase(utterances[0]);
 		ready_utterances.erase(utterances[0]);
 		utterances.remove_at(0);
+		emit_signal("next_popped", message_talk);
 	}
 	return message_talk;
 }

@@ -38,7 +38,9 @@ void InworldCharacter::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "talk_queue"), "", "get_talk_queue");
 
 	ClassDB::bind_method(D_METHOD("on_talk_queue_next_ready"), &InworldCharacter::on_talk_queue_next_ready);
+	ClassDB::bind_method(D_METHOD("on_talk_queue_next_popped"), &InworldCharacter::on_talk_queue_next_popped);
 
+	ADD_SIGNAL(MethodInfo("message_talk", PropertyInfo(Variant::OBJECT, "talk")));
 	ADD_SIGNAL(MethodInfo("message_stt", PropertyInfo(Variant::OBJECT, "stt")));
 	ADD_SIGNAL(MethodInfo("message_emotion", PropertyInfo(Variant::OBJECT, "emotion")));
 	ADD_SIGNAL(MethodInfo("message_trigger", PropertyInfo(Variant::OBJECT, "trigger")));
@@ -51,6 +53,7 @@ InworldCharacter::InworldCharacter() :
 		Node{}, brain{}, session{ nullptr }, talk_queue{ nullptr } {
 	talk_queue = memnew(InworldTalkQueue);
 	talk_queue->connect("next_ready", Callable(this, "on_talk_queue_next_ready"));
+	talk_queue->connect("next_popped", Callable(this, "on_talk_queue_next_popped"));
 }
 
 InworldCharacter::~InworldCharacter() {
@@ -174,6 +177,10 @@ void InworldCharacter::on_event_control(Ref<InworldEventControl> p_event_control
 
 void InworldCharacter::on_talk_queue_next_ready() {
 	emit_signal("talk_queue_next_ready", talk_queue);
+}
+
+void InworldCharacter::on_talk_queue_next_popped(Ref<InworldMessageTalk> p_message_talk) {
+	emit_signal("message_talk", p_message_talk);
 }
 
 void InworldCharacter::bind_brain_to_session() {

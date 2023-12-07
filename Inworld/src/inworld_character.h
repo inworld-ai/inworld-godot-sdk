@@ -52,6 +52,7 @@ public:
 
 private:
 	void on_talk_queue_next_ready();
+	void on_talk_queue_next_popped(Ref<InworldMessageTalk> p_message_talk);
 
 	void bind_brain_to_session();
 	void unbind_brain_from_session();
