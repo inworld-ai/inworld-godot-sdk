@@ -8,6 +8,12 @@ namespace godot {
 class InworldCharacter;
 class InworldMicrophone;
 
+class InworldMessageTalk;
+class InworldMessageSpeechToText;
+class InworldMessageEmotion;
+class InworldMessageTrigger;
+class InworldMessageControl;
+
 class InworldPlayer : public Node {
 	GDCLASS(InworldPlayer, Node);
 
@@ -38,6 +44,15 @@ public:
 private:
 	void _start_talk_to_target();
 	void _stop_talk_to_target();
+
+	void _bind_to_target();
+	void _unbind_from_target();
+
+	void on_target_message_talk(Ref<InworldMessageTalk> p_message_talk);
+	void on_target_message_stt(Ref<InworldMessageSpeechToText> p_message_stt);
+	void on_target_message_emotion(Ref<InworldMessageEmotion> p_message_emotion);
+	void on_target_message_trigger(Ref<InworldMessageTrigger> p_message_trigger);
+	void on_target_message_control(Ref<InworldMessageControl> p_message_control);
 };
 
 } // namespace godot

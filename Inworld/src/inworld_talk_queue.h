@@ -28,7 +28,7 @@ public:
 	void update_chunk(String p_utterance_id, PackedByteArray p_chunk);
 
 	bool is_next_ready() const;
-	Ref<InworldMessageTalk> pop_ready();
+	Ref<InworldMessageTalk> pop_next_ready();
 
 private:
 	void _check_talk_ready(String p_utterance_id);
