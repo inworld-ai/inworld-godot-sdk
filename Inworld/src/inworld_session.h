@@ -5,6 +5,7 @@
 #include "Types.h"
 
 #include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/templates/vector.hpp>
 
 #include <string>
 #include <unordered_map>
@@ -59,6 +60,8 @@ public:
 	void start_audio_session(String p_brain);
 	void stop_audio_session(String p_brain);
 	void send_audio(String p_brain, PackedByteArray &p_data);
+
+	void cancel_response(String p_brain, String p_interaction_id, Vector<String> p_utterance_ids);
 
 #define DECLARE_CONNECT_EVENTS(Type)                                                                \
 	void connect_##Type##_events(String p_brain, const Callable &p_callable, uint32_t p_flags = 0); \

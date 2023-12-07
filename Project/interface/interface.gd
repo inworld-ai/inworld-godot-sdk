@@ -15,6 +15,8 @@ func _on_text_input_entered(text : String):
 
 func _on_text_input_recording(recording : bool):
 	inworld_player.talking = recording
+	if(recording):
+		inworld_player.target_character.interrupt()
 
 
 func _on_inworld_character_message_emotion(emotion : InworldMessageEmotion):
@@ -52,3 +54,7 @@ func _on_inworld_character_message_talk(talk):
 		
 		$AudioStreamPlayer.stream = audio_wav;
 		$AudioStreamPlayer.play();
+
+
+func _on_inworld_character_interrupted():
+	$AudioStreamPlayer.stop()
