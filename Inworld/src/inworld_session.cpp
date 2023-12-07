@@ -6,6 +6,7 @@
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
@@ -155,7 +156,7 @@ InworldSession::ConnectionState InworldSession::get_connection_state() const {
 }
 
 bool InworldSession::get_connected() const {
-	return get_connection_state() == InworldSession::ConnectionState::CONNECTED;
+	return get_connection_state() == InworldSession::ConnectionState::CONNECTED && get_established();
 }
 
 bool InworldSession::get_established() const {
@@ -163,42 +164,67 @@ bool InworldSession::get_established() const {
 }
 
 String InworldSession::get_name(String p_brain) const {
-	return String(agent_info_map[p_brain.utf8().get_data()].GivenName.c_str());
+	std::optional<Inworld::AgentInfo> agent = get_agent_from_brain(p_brain);
+	return agent.has_value() ? String(agent.value().GivenName.c_str()) : String{};
 }
 
 void InworldSession::send_text(String p_brain, String p_text) {
-	client.SendTextMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, p_text.utf8().get_data());
+	std::optional<Inworld::AgentInfo> agent = get_agent_from_brain(p_brain);
+	if (!agent.has_value()) {
+		return;
+	}
+	client.SendTextMessage(agent.value().AgentId, p_text.utf8().get_data());
 }
 
 void InworldSession::send_trigger(String p_brain, String p_name, Dictionary p_params) {
+	std::optional<Inworld::AgentInfo> agent = get_agent_from_brain(p_brain);
+	if (!agent.has_value()) {
+		return;
+	}
 	std::unordered_map<std::string, std::string> map;
 	for (int64_t i = 0; i < p_params.size(); ++i) {
 		const String key = p_params.keys()[i].stringify();
 		const String value = p_params.values()[i].stringify();
 		map[key.utf8().get_data()] = value.utf8().get_data();
 	}
-	client.SendCustomEvent(agent_info_map[p_brain.utf8().get_data()].AgentId, p_name.utf8().get_data(), map);
+	client.SendCustomEvent(agent.value().AgentId, p_name.utf8().get_data(), map);
 }
 
 void InworldSession::start_audio_session(String p_brain) {
-	client.StartAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
+	std::optional<Inworld::AgentInfo> agent = get_agent_from_brain(p_brain);
+	if (!agent.has_value()) {
+		return;
+	}
+	client.StartAudioSession(agent.value().AgentId);
 }
 
 void InworldSession::stop_audio_session(String p_brain) {
-	client.StopAudioSession(agent_info_map[p_brain.utf8().get_data()].AgentId);
+	std::optional<Inworld::AgentInfo> agent = get_agent_from_brain(p_brain);
+	if (!agent.has_value()) {
+		return;
+	}
+	client.StopAudioSession(agent.value().AgentId);
 }
 
 void InworldSession::send_audio(String p_brain, PackedByteArray &p_data) {
+	std::optional<Inworld::AgentInfo> agent = get_agent_from_brain(p_brain);
+	if (!agent.has_value()) {
+		return;
+	}
 	std::string data((char *)p_data.ptrw(), p_data.size());
-	client.SendSoundMessage(agent_info_map[p_brain.utf8().get_data()].AgentId, data);
+	client.SendSoundMessage(agent.value().AgentId, data);
 }
 
 void InworldSession::cancel_response(String p_brain, String p_interaction_id, Vector<String> p_utterance_ids) {
+	std::optional<Inworld::AgentInfo> agent = get_agent_from_brain(p_brain);
+	if (!agent.has_value()) {
+		return;
+	}
 	std::vector<std::string> utterance_ids;
 	for (const String &utterance_id : p_utterance_ids) {
 		utterance_ids.push_back(utterance_id.utf8().get_data());
 	}
-	client.CancelResponse(agent_info_map[p_brain.utf8().get_data()].AgentId, p_interaction_id.utf8().get_data(), utterance_ids);
+	client.CancelResponse(agent.value().AgentId, p_interaction_id.utf8().get_data(), utterance_ids);
 }
 
 #define DEFINE_CONNECT_EVENTS(Type)                                                                                 \
@@ -251,4 +277,13 @@ void InworldSession::set_auth(String p_auth) {
 }
 String InworldSession::get_auth() const {
 	return auth;
+}
+
+std::optional<Inworld::AgentInfo> InworldSession::get_agent_from_brain(String p_brain) const {
+	std::optional<Inworld::AgentInfo> agent;
+	const std::string brain = p_brain.utf8().get_data();
+	if (agent_info_map.find(brain) != agent_info_map.end()) {
+		agent = agent_info_map[brain];
+	}
+	return agent;
 }
