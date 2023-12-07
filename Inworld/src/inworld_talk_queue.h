@@ -27,8 +27,8 @@ public:
 public:
 	Vector<Ref<InworldMessageTalk>> InworldTalkQueue::get_talks();
 
-	void update_text(String p_utterance_id, String p_text);
-	void update_chunk(String p_utterance_id, PackedByteArray p_chunk);
+	void update_text(String p_interaction_id, String p_utterance_id, String p_text);
+	void update_chunk(String p_interaction_id, String p_utterance_id, PackedByteArray p_chunk);
 
 	void finish_current();
 
@@ -36,7 +36,7 @@ public:
 
 private:
 	void _check_next_ready();
-	Ref<InworldMessageTalk> _find_or_create(String utterance_id);
+	Ref<InworldMessageTalk> _find_or_create(String p_interaction_id, String utterance_id);
 };
 
 } // namespace godot

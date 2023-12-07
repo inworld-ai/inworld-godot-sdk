@@ -25,6 +25,7 @@ private:
 	InworldSession *session;
 	Vector<String> pending_interaction_ids;
 	Vector<String> canceled_interaction_ids;
+	String current_voice_interaction_id;
 	InworldTalkQueue *talk_queue;
 	bool wants_audio_session;
 
