@@ -44,10 +44,9 @@ func _on_inworld_player_target_message_talk(talk: InworldMessageTalk):
 	$Interface.set_text($Player/InworldPlayer.target_character.brain, talk.text)
 	if(!talk.chunk.is_empty()):
 		var audio_wav = AudioStreamWAV.new()
-		talk.chunk.decode_u16(0)
 		audio_wav.data = talk.chunk;
 		audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
-		audio_wav.mix_rate = 16000;
+		audio_wav.mix_rate = 22000;
 		
 		$Interface/AudioStreamPlayer.stream = audio_wav;
 		$Interface/AudioStreamPlayer.play();
