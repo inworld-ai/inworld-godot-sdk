@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Inworld Sample Project"
 config/description="Sample project for Inworld AI"
-run/main_scene="res://inworld_scene.tscn"
+run/main_scene="res://interface/DemoWorld.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
