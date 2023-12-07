@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://btph3gxfonssl"]
+[gd_scene load_steps=3 format=3 uid="uid://btph3gxfonssl"]
 
 [ext_resource type="Script" path="res://Mob.gd" id="1_cc2va"]
 [ext_resource type="Texture2D" uid="uid://scdihch4471h" path="res://redbox.jpg" id="2_nhg2l"]
-[ext_resource type="PackedScene" uid="uid://ldhr6dpms0lt" path="res://interface/text_output.tscn" id="3_kds0t"]
 
 [node name="Mob" type="Area2D"]
 script = ExtResource("1_cc2va")
@@ -11,23 +10,4 @@ script = ExtResource("1_cc2va")
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_nhg2l")
 
-[node name="MobCharacter" type="InworldCharacter" parent="."]
-talk_queue = Object(InworldTalkQueue,"script":null)
-
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="."]
-
-[node name="TextOutput" parent="." instance=ExtResource("3_kds0t")]
-custom_minimum_size = Vector2(100, 100)
-anchors_preset = 12
-anchor_top = 1.0
-offset_left = -50.0
-offset_top = -100.0
-offset_right = 50.0
-grow_vertical = 0
-
 [connection signal="character_text" from="." to="." method="_on_character_text"]
-[connection signal="message_control" from="MobCharacter" to="." method="_on_mob_character_message_control"]
-[connection signal="message_emotion" from="MobCharacter" to="." method="_on_mob_character_message_emotion"]
-[connection signal="message_trigger" from="MobCharacter" to="." method="_on_mob_character_message_trigger"]
-[connection signal="talk_queue_next_ready" from="MobCharacter" to="." method="_on_mob_character_talk_queue_next_ready"]

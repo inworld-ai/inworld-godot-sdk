@@ -25,7 +25,7 @@ public:
 	~InworldTalkQueue();
 
 public:
-	Vector<Ref<InworldMessageTalk>> InworldTalkQueue::get_talks();
+	Vector<Ref<InworldMessageTalk>> get_talks();
 
 	void update_text(String p_interaction_id, String p_utterance_id, String p_text);
 	void update_chunk(String p_interaction_id, String p_utterance_id, PackedByteArray p_chunk);

@@ -1,24 +1,12 @@
 extends Area2D
-
-@export var inworld_session: InworldSession
-@export var inworld_character: InworldCharacter
 @export var myName: String
+@export var character: InworldCharacter
 var mobs
 
 var talking : bool = false;
 
 
 signal character_text(text: String)
-
-func set_session(session: InworldSession, characterName: String):
-	inworld_session = session
-	$MobCharacter.session = session
-	myName = characterName
-	var brain_parts = []
-	var workspace = session.scene.split("/")[1]
-	var brain = "workspaces/" + workspace + "godot/characters/" + characterName
-	$MobCharacter.brain = "/".join(brain_parts)
-	inworld_character = $MobCharacter
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -57,6 +45,7 @@ func _on_mob_character_talk_queue_next_ready(talk_queue):
 	if(!talking):
 		play_message_talk(talk_queue.pop_ready())
 
-func _on_character_text(text):
+func _on_mob_character_message_talk(talk):
 	print("HERE")
-	$TextOutput.add_text(myName, text)
+
+
