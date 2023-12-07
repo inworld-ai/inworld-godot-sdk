@@ -50,6 +50,7 @@ position = Vector2(100, 400)
 
 [connection signal="finished" from="Interface/AudioStreamPlayer" to="Interface" method="_on_audio_stream_player_finished"]
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
+[connection signal="interrupted" from="InworldCharacter" to="Interface" method="_on_inworld_character_interrupted"]
 [connection signal="message_control" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_control"]
 [connection signal="message_emotion" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_emotion"]
 [connection signal="message_stt" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_stt"]

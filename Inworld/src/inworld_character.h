@@ -7,6 +7,7 @@
 
 namespace godot {
 class InworldSession;
+class InworldEvent;
 class InworldEventText;
 class InworldEventDataAudio;
 class InworldEventEmotion;
@@ -58,7 +59,7 @@ public:
 
 private:
 	void finish_current_message_talk();
-	void on_talk_queue_next_talk_ready(Ref<InworldMessageTalk> p_message_talk);
+	void on_talk_queue_next_ready(Ref<InworldMessageTalk> p_message_talk);
 
 	void bind_brain_to_session();
 	void unbind_brain_from_session();

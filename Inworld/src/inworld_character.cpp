@@ -38,7 +38,7 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("on_event_control", "control"), &InworldCharacter::on_event_control);
 
 	ClassDB::bind_method(D_METHOD("finish_current_message_talk"), &InworldCharacter::finish_current_message_talk);
-	ClassDB::bind_method(D_METHOD("on_talk_queue_next_talk_ready"), &InworldCharacter::on_talk_queue_next_talk_ready);
+	ClassDB::bind_method(D_METHOD("on_talk_queue_next_ready"), &InworldCharacter::on_talk_queue_next_ready);
 
 	ADD_SIGNAL(MethodInfo("message_talk", PropertyInfo(Variant::OBJECT, "talk")));
 	ADD_SIGNAL(MethodInfo("message_stt", PropertyInfo(Variant::OBJECT, "stt")));
@@ -52,7 +52,7 @@ void InworldCharacter::_bind_methods() {
 InworldCharacter::InworldCharacter() :
 		Node{}, brain{}, session{ nullptr }, talk_queue{ nullptr }, wants_audio_session{ false } {
 	talk_queue = memnew(InworldTalkQueue);
-	talk_queue->connect("next_talk_ready", Callable(this, "on_talk_queue_next_talk_ready"));
+	talk_queue->connect("next_ready", Callable(this, "on_talk_queue_next_ready"));
 }
 
 InworldCharacter::~InworldCharacter() {
@@ -93,7 +93,6 @@ void InworldCharacter::send_text(String p_text) {
 	if (session == nullptr || !session->get_connected()) {
 		return;
 	}
-	interrupt();
 	session->send_text(brain, p_text);
 }
 
@@ -131,22 +130,22 @@ void InworldCharacter::interrupt() {
 	canceled_interaction_ids.append_array(pending_interaction_ids);
 	pending_interaction_ids.clear();
 
-	Vector<String> pending_interaction_ids_copy = pending_interaction_ids;
-	bool interrupted = false;
-	for (const String &pending_interaction_id : pending_interaction_ids_copy) {
-		interrupt_interaction(pending_interaction_id);
-		interrupted = true;
+	Vector<Ref<InworldMessageTalk>> talks_to_interrupt = talk_queue->get_talks();
+	if (!talks_to_interrupt.is_empty()) {
+		Ref<InworldMessageTalk> message_talk = talks_to_interrupt[0];
+		String interaction_id = message_talk->get_interaction_id();
+		Vector<String> utterance_ids;
+		for (const Ref<InworldMessageTalk> &talk_to_interrupt : talks_to_interrupt) {
+			if (interaction_id != talk_to_interrupt->get_interaction_id()) {
+				session->cancel_response(brain, interaction_id, utterance_ids);
+				interaction_id = talk_to_interrupt->get_interaction_id();
+			}
+			utterance_ids.push_back(interaction_id);
+		}
+		session->cancel_response(brain, interaction_id, utterance_ids);
+		talk_queue->clear();
+		emit_signal("interrupt");
 	}
-	if (interrupted) {
-		emit_signal("interrupted");
-	}
-}
-
-void InworldCharacter::interrupt_interaction(String p_interaction_id) {
-	Vector<String> utterance_ids = talk_queue->interrupt_interaction(p_interaction_id);
-	session->cancel_response(brain, p_interaction_id, utterance_ids);
-	pending_interaction_ids.erase(p_interaction_id);
-	canceled_interaction_ids.push_back(p_interaction_id);
 }
 
 void InworldCharacter::_on_event(InworldEvent *p_event) {
@@ -170,11 +169,6 @@ void InworldCharacter::on_event_text(Ref<InworldEventText> p_event_text) {
 	if (p_event_text->get_source_actor_type() == StringName("Agent")) {
 		talk_queue->update_text(p_event_text->get_utterance_id(), p_event_text->text);
 	} else {
-		const String interaction_id = p_event_text->get_interaction_id();
-		interrupt();
-		canceled_interaction_ids.erase(interaction_id);
-		pending_interaction_ids = { interaction_id };
-
 		Ref<InworldMessageSpeechToText> message_stt;
 		message_stt.instantiate();
 
@@ -237,7 +231,7 @@ void InworldCharacter::finish_current_message_talk() {
 	talk_queue->finish_current();
 }
 
-void InworldCharacter::on_talk_queue_next_talk_ready(Ref<InworldMessageTalk> p_message_talk) {
+void InworldCharacter::on_talk_queue_next_ready(Ref<InworldMessageTalk> p_message_talk) {
 	emit_signal("message_talk", p_message_talk);
 }
 
