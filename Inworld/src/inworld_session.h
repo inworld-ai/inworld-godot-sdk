@@ -7,6 +7,7 @@
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/templates/vector.hpp>
 
+#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -87,6 +88,7 @@ private:
 	Inworld::Client client;
 	InworldPacketHandler *packet_handler;
 	mutable std::unordered_map<std::string, Inworld::AgentInfo> agent_info_map;
+	std::optional<Inworld::AgentInfo> get_agent_from_brain(String p_brain) const;
 };
 
 } // namespace godot
