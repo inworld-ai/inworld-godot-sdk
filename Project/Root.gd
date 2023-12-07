@@ -36,12 +36,12 @@ func _process(delta):
 	if max_dist < 150 and (current_name != closest_mob.myName or current_name == null):
 		print("Setting partner to: " + closest_mob.myName)
 		current_name = closest_mob.myName
-		$Player/InworldPlayer.target_character = $Vik/InworldCharacter
+		$Player/InworldPlayer.target_character = closest_mob.get_node("InworldCharacter")
 	#else:
 		#$Player.clear_conversation_partner()
 
 func _on_inworld_player_target_message_talk(talk: InworldMessageTalk):
-	$Interface.set_text($Player/InworldPlayer.target_character.brain, talk.text)
+	$Interface.set_text($Player/InworldPlayer.target_character.get_name(), talk.text)
 	if(!talk.chunk.is_empty()):
 		var audio_wav = AudioStreamWAV.new()
 		audio_wav.data = talk.chunk;
@@ -57,4 +57,4 @@ func _on_audio_stream_player_finished():
 
 func _on_inworld_player_target_message_stt(stt):
 	if (stt.complete):
-		$Interface.set_text("Character", stt.text)
+		$Interface.set_text($Player/InworldPlayer.name, stt.text)

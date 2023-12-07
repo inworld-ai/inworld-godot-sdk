@@ -17,7 +17,8 @@ inworld_player = NodePath("../Player/InworldPlayer")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Interface"]
 
-[node name="InworldSession" type="InworldSession" parent="."]
+[node name="InworldSession" type="InworldSession" parent="." node_paths=PackedStringArray("player")]
+player = NodePath("../Player/InworldPlayer")
 scene = "workspaces/godot/scenes/godot"
 auth = "NElaNFhqTkVTU2tzNG1QSHVPcUQyS1ZHZlg5ZWk0MzQ6MHlqbXV5VGVpY2s4YUM5OVhLR1doTE5VaThFMnRjWXBTZDd4YTJVYTJuV1hZd0oyTnpLaFpyTXI5c0llYlF0Uw=="
 script = ExtResource("3_2i3g7")
@@ -64,6 +65,7 @@ session = NodePath("../../InworldSession")
 [node name="Player" parent="." instance=ExtResource("4_tplsn")]
 
 [node name="InworldPlayer" type="InworldPlayer" parent="Player"]
+name = "Matthew"
 
 [connection signal="finished" from="Interface/AudioStreamPlayer" to="." method="_on_audio_stream_player_finished"]
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]

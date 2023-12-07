@@ -10,7 +10,7 @@ var talking : bool = false;
 
 func _on_text_input_entered(text : String):
 	player_text.emit(text)
-	$TextOutput.add_text("Character", text)
+	$TextOutput.add_text(inworld_player.name, text)
 	inworld_player.target_character.send_text(text)
 
 func _on_text_input_recording(recording : bool):
