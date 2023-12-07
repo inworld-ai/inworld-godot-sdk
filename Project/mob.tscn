@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://btph3gxfonssl"]
+
+[ext_resource type="Script" path="res://Mob.gd" id="1_cc2va"]
+[ext_resource type="Texture2D" uid="uid://scdihch4471h" path="res://redbox.jpg" id="2_nhg2l"]
+
+[node name="Mob" type="Area2D"]
+script = ExtResource("1_cc2va")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_nhg2l")
+
+[node name="MobCharacter" type="InworldCharacter" parent="."]

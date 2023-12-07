@@ -1,11 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://drem16al40jf4"]
+[gd_scene load_steps=7 format=3 uid="uid://drem16al40jf4"]
 
+[ext_resource type="Script" path="res://Root.gd" id="1_iuwmo"]
 [ext_resource type="PackedScene" uid="uid://cesm2ftmwtcnp" path="res://interface/interface.tscn" id="2_swbl7"]
 [ext_resource type="Script" path="res://InworldSession.gd" id="2_yrq8l"]
+[ext_resource type="PackedScene" uid="uid://jvf1fo60ethj" path="res://player.tscn" id="4_tplsn"]
+[ext_resource type="PackedScene" uid="uid://btph3gxfonssl" path="res://mob.tscn" id="5_87lf8"]
 
 [sub_resource type="Theme" id="Theme_oxc0t"]
 
 [node name="Root" type="Node"]
+script = ExtResource("1_iuwmo")
 
 [node name="Interface" parent="." node_paths=PackedStringArray("inworld_player", "inworld_character") instance=ExtResource("2_swbl7")]
 theme = SubResource("Theme_oxc0t")
@@ -28,6 +32,23 @@ talk_queue = Object(InworldTalkQueue,"script":null)
 
 [node name="InworldPlayer" type="InworldPlayer" parent="." node_paths=PackedStringArray("target_character")]
 target_character = NodePath("../InworldCharacter")
+
+[node name="Player" parent="." instance=ExtResource("4_tplsn")]
+
+[node name="PlayerStartPosition" type="Marker2D" parent="."]
+position = Vector2(300, 500)
+
+[node name="Godot" parent="." instance=ExtResource("5_87lf8")]
+position = Vector2(1050, 400)
+
+[node name="Carey" parent="." instance=ExtResource("5_87lf8")]
+position = Vector2(299, 300)
+
+[node name="Wilson" parent="." instance=ExtResource("5_87lf8")]
+position = Vector2(700, 200)
+
+[node name="Vik" parent="." instance=ExtResource("5_87lf8")]
+position = Vector2(100, 400)
 
 [connection signal="finished" from="Interface/AudioStreamPlayer" to="Interface" method="_on_audio_stream_player_finished"]
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]

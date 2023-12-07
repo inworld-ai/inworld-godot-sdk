@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://jvf1fo60ethj"]
+
+[ext_resource type="Script" path="res://Player.gd" id="1_hlyya"]
+[ext_resource type="Texture2D" uid="uid://scdihch4471h" path="res://redbox.jpg" id="2_xvfws"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_s3qbp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_xvfws")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[node name="Player" type="Area2D"]
+script = ExtResource("1_hlyya")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.1, 0.1)
+sprite_frames = SubResource("SpriteFrames_s3qbp")
+animation = &"walk"
+
+[node name="ConversationPartner" type="InworldPlayer" parent="."]
