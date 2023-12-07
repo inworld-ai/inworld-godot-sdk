@@ -73,7 +73,7 @@ void InworldEventText::_bind_methods() {
 }
 
 InworldEventText::InworldEventText() :
-		InworldEvent(), text(), complete() {
+		InworldEvent{}, text{}, complete{ false } {
 }
 
 InworldEventText::~InworldEventText() {
@@ -94,7 +94,7 @@ void InworldEventData::_bind_methods() {
 }
 
 InworldEventData::InworldEventData() :
-		InworldEvent(), chunk() {
+		InworldEvent{}, chunk{} {
 }
 
 InworldEventData::~InworldEventData() {
@@ -108,7 +108,7 @@ void InworldEventDataAudio::_bind_methods() {
 }
 
 InworldEventDataAudio::InworldEventDataAudio() :
-		InworldEventData() {
+		InworldEventData{} {
 }
 
 InworldEventDataAudio::~InworldEventDataAudio() {
@@ -123,7 +123,7 @@ void InworldEventEmotion::_bind_methods() {
 }
 
 InworldEventEmotion::InworldEventEmotion() :
-		InworldEvent(), behavior("Neutral"), strength("Normal") {
+		InworldEvent{}, behavior{ "Neutral" }, strength{ "Normal" } {
 }
 
 InworldEventEmotion::~InworldEventEmotion() {
@@ -146,7 +146,7 @@ void InworldEventTrigger::_bind_methods() {
 }
 
 InworldEventTrigger::InworldEventTrigger() :
-		InworldEvent(), name(), params() {
+		InworldEvent{}, name{}, params{} {
 }
 
 InworldEventTrigger::~InworldEventTrigger() {
@@ -167,7 +167,7 @@ void InworldEventControl::_bind_methods() {
 }
 
 InworldEventControl::InworldEventControl() :
-		InworldEvent(), type("Unknown") {
+		InworldEvent{}, type{ "Unknown" } {
 }
 
 InworldEventControl::~InworldEventControl() {

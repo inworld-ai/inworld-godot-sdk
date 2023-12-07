@@ -15,6 +15,7 @@ protected:
 	static void _bind_methods();
 
 private:
+	String name;
 	InworldCharacter *target_character;
 	InworldMicrophone *microphone;
 	bool talking;
@@ -24,6 +25,9 @@ public:
 	~InworldPlayer();
 
 	virtual void _process(double_t delta) override;
+
+	void set_name(String p_name);
+	String get_name() const;
 
 	void set_target_character(InworldCharacter *p_target_character);
 	InworldCharacter *get_target_character() const;

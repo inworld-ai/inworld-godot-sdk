@@ -3,6 +3,8 @@
 
 #include <godot_cpp/classes/node.hpp>
 
+#include "inworld_talk_queue.h"
+
 namespace godot {
 class InworldSession;
 class InworldEventText;
@@ -20,6 +22,7 @@ protected:
 private:
 	String brain;
 	InworldSession *session;
+	InworldTalkQueue *talk_queue;
 
 public:
 	InworldCharacter();
@@ -28,8 +31,12 @@ public:
 	void set_brain(String p_brain);
 	String get_brain() const;
 
+	String get_name() const;
+
 	void set_session(InworldSession *p_session);
 	InworldSession *get_session() const;
+
+	InworldTalkQueue *get_talk_queue() const;
 
 	void send_text(String p_text);
 	void send_trigger(String p_name, Dictionary p_params);
@@ -44,6 +51,8 @@ public:
 	void on_event_control(Ref<InworldEventControl> p_event_control);
 
 private:
+	void on_talk_queue_next_ready();
+
 	void bind_brain_to_session();
 	void unbind_brain_from_session();
 	void on_session_established(bool p_established);

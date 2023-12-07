@@ -30,13 +30,14 @@ String InworldMessage::get_utterance_id() const {
 void InworldMessageTalk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_text"), &InworldMessageTalk::get_text);
 	ClassDB::bind_method(D_METHOD("get_chunk"), &InworldMessageTalk::get_chunk);
+	ClassDB::bind_method(D_METHOD("get_ready"), &InworldMessageTalk::get_ready);
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "text"), "", "get_text");
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_BYTE_ARRAY, "chunk"), "", "get_chunk");
 }
 
 InworldMessageTalk::InworldMessageTalk() :
-		InworldMessage(), text(), chunk() {
+		InworldMessage{}, text{}, chunk{} {
 }
 
 InworldMessageTalk::~InworldMessageTalk() {
@@ -50,6 +51,10 @@ PackedByteArray InworldMessageTalk::get_chunk() const {
 	return chunk;
 }
 
+bool InworldMessageTalk::get_ready() const {
+	return !text.is_empty() && !chunk.is_empty();
+}
+
 void InworldMessageSpeechToText::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_text"), &InworldMessageSpeechToText::get_text);
 	ClassDB::bind_method(D_METHOD("get_complete"), &InworldMessageSpeechToText::get_complete);
@@ -59,7 +64,7 @@ void InworldMessageSpeechToText::_bind_methods() {
 }
 
 InworldMessageSpeechToText::InworldMessageSpeechToText() :
-		InworldMessage(), text(), complete(false) {
+		InworldMessage{}, text{}, complete{ false } {
 }
 
 InworldMessageSpeechToText::~InworldMessageSpeechToText() {
@@ -82,7 +87,7 @@ void InworldMessageEmotion::_bind_methods() {
 }
 
 InworldMessageEmotion::InworldMessageEmotion() :
-		InworldMessage(), behavior("Neutral"), strength("Normal") {
+		InworldMessage{}, behavior{ "Neutral" }, strength{ "Normal" } {
 }
 
 InworldMessageEmotion::~InworldMessageEmotion() {
@@ -105,7 +110,7 @@ void InworldMessageTrigger::_bind_methods() {
 }
 
 InworldMessageTrigger::InworldMessageTrigger() :
-		InworldMessage(), name(), params() {
+		InworldMessage{}, name{}, params{} {
 }
 
 InworldMessageTrigger::~InworldMessageTrigger() {
@@ -126,7 +131,7 @@ void InworldMessageControl::_bind_methods() {
 }
 
 InworldMessageControl::InworldMessageControl() :
-		InworldMessage(), type("Unknown") {
+		InworldMessage{}, type{ "Unknown" } {
 }
 
 InworldMessageControl::~InworldMessageControl() {
