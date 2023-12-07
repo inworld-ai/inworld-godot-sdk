@@ -10,4 +10,4 @@ script = ExtResource("1_cc2va")
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_nhg2l")
 
-[node name="MobCharacter" type="InworldCharacter" parent="."]
+[connection signal="character_text" from="." to="." method="_on_character_text"]

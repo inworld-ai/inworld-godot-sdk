@@ -33,6 +33,3 @@ func _process(delta):
 	position = position.clamp(Vector2.ZERO, screen_size)
 	
 	# TODO(vik) add animation
-	
-func set_conversation_partner(character: InworldCharacter):
-	$ConversationPartner.target_character = character

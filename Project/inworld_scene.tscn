@@ -11,48 +11,61 @@
 [node name="Root" type="Node"]
 script = ExtResource("1_iuwmo")
 
-[node name="Interface" parent="." node_paths=PackedStringArray("inworld_player", "inworld_character") instance=ExtResource("2_swbl7")]
+[node name="Interface" parent="." node_paths=PackedStringArray("inworld_player") instance=ExtResource("2_swbl7")]
 theme = SubResource("Theme_oxc0t")
-inworld_player = NodePath("../InworldPlayer")
-inworld_character = NodePath("../InworldCharacter")
+inworld_player = NodePath("../Player/InworldPlayer")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Interface"]
 
-[node name="InworldSession" type="InworldSession" parent="." node_paths=PackedStringArray("player")]
-player = NodePath("../InworldPlayer")
+[node name="InworldSession" type="InworldSession" parent="."]
 scene = "workspaces/godot/scenes/godot"
 auth = "NElaNFhqTkVTU2tzNG1QSHVPcUQyS1ZHZlg5ZWk0MzQ6MHlqbXV5VGVpY2s4YUM5OVhLR1doTE5VaThFMnRjWXBTZDd4YTJVYTJuV1hZd0oyTnpLaFpyTXI5c0llYlF0Uw=="
 script = ExtResource("3_2i3g7")
 
-[node name="InworldCharacter" type="InworldCharacter" parent="." node_paths=PackedStringArray("session")]
-brain = "workspaces/godot/characters/godot"
-session = NodePath("../InworldSession")
-
-[node name="InworldPlayer" type="InworldPlayer" parent="." node_paths=PackedStringArray("target_character")]
-target_character = NodePath("../InworldCharacter")
-
-[node name="Player" parent="." instance=ExtResource("4_tplsn")]
-
 [node name="PlayerStartPosition" type="Marker2D" parent="."]
 position = Vector2(300, 500)
 
-[node name="Godot" parent="." instance=ExtResource("5_87lf8")]
+[node name="Godot" parent="." node_paths=PackedStringArray("character") instance=ExtResource("5_87lf8")]
 position = Vector2(1050, 400)
+myName = "godot"
+character = NodePath("InworldCharacter")
 
-[node name="Carey" parent="." instance=ExtResource("5_87lf8")]
+[node name="InworldCharacter" type="InworldCharacter" parent="Godot" node_paths=PackedStringArray("session")]
+brain = "workspaces/godot/characters/godot"
+session = NodePath("../../InworldSession")
+
+[node name="Carey" parent="." node_paths=PackedStringArray("character") instance=ExtResource("5_87lf8")]
 position = Vector2(299, 300)
+myName = "carey"
+character = NodePath("InworldCharacter")
 
-[node name="Wilson" parent="." instance=ExtResource("5_87lf8")]
+[node name="InworldCharacter" type="InworldCharacter" parent="Carey" node_paths=PackedStringArray("session")]
+brain = "workspaces/godot/characters/carey"
+session = NodePath("../../InworldSession")
+
+[node name="Wilson" parent="." node_paths=PackedStringArray("character") instance=ExtResource("5_87lf8")]
 position = Vector2(700, 200)
+myName = "wilson"
+character = NodePath("InworldCharacter")
 
-[node name="Vik" parent="." instance=ExtResource("5_87lf8")]
+[node name="InworldCharacter" type="InworldCharacter" parent="Wilson" node_paths=PackedStringArray("session")]
+brain = "workspaces/godot/characters/godot"
+session = NodePath("../../InworldSession")
+
+[node name="Vik" parent="." node_paths=PackedStringArray("character") instance=ExtResource("5_87lf8")]
 position = Vector2(100, 400)
+myName = "vik"
+character = NodePath("InworldCharacter")
 
-[connection signal="finished" from="Interface/AudioStreamPlayer" to="Interface" method="_on_audio_stream_player_finished"]
+[node name="InworldCharacter" type="InworldCharacter" parent="Vik" node_paths=PackedStringArray("session")]
+brain = "workspaces/godot/characters/godot"
+session = NodePath("../../InworldSession")
+
+[node name="Player" parent="." instance=ExtResource("4_tplsn")]
+
+[node name="InworldPlayer" type="InworldPlayer" parent="Player"]
+
+[connection signal="finished" from="Interface/AudioStreamPlayer" to="." method="_on_audio_stream_player_finished"]
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
-[connection signal="interrupted" from="InworldCharacter" to="Interface" method="_on_inworld_character_interrupted"]
-[connection signal="message_control" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_control"]
-[connection signal="message_emotion" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_emotion"]
-[connection signal="message_stt" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_stt"]
-[connection signal="message_talk" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_talk"]
-[connection signal="message_trigger" from="InworldCharacter" to="Interface" method="_on_inworld_character_message_trigger"]
+[connection signal="target_message_stt" from="Player/InworldPlayer" to="." method="_on_inworld_player_target_message_stt"]
+[connection signal="target_message_talk" from="Player/InworldPlayer" to="." method="_on_inworld_player_target_message_talk"]

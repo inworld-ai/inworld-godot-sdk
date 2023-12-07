@@ -21,5 +21,3 @@ script = ExtResource("1_hlyya")
 scale = Vector2(0.1, 0.1)
 sprite_frames = SubResource("SpriteFrames_s3qbp")
 animation = &"walk"
-
-[node name="ConversationPartner" type="InworldPlayer" parent="."]

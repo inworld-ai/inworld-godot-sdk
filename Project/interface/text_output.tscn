@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://interface/text_output.gd" id="1_k73j4"]
 
-[node name="Control" type="Control" node_paths=PackedStringArray("scroll", "container")]
+[node name="Control2" type="Control" node_paths=PackedStringArray("scroll", "container")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

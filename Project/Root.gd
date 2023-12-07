@@ -7,14 +7,18 @@ var characters = [
 	"wilson",
 	"vik"
 ]
+var current_name: String
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	mobs = [
+		$Godot,
+		$Carey,
+		$Wilson,
+		$Vik,
+	]
 	$Player.start($PlayerStartPosition.position)
-	mobs = [$Godot, $Carey, $Wilson, $Vik]
-	for i in range(len(mobs)):
-		mobs[i].set_session($InworldSession, characters[i])
-	
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -27,6 +31,31 @@ func _process(delta):
 		dist = player_pos.distance_to(m.position)
 		if dist < max_dist:
 			closest_mob = m
-			
-	$Player.set_conversation_partner(closest_mob.inworld_character)
+			max_dist = dist
+	
+	if max_dist < 150 and (current_name != closest_mob.myName or current_name == null):
+		print("Setting partner to: " + closest_mob.myName)
+		current_name = closest_mob.myName
+		$Player/InworldPlayer.target_character = $Vik/InworldCharacter
+	#else:
+		#$Player.clear_conversation_partner()
+
+func _on_inworld_player_target_message_talk(talk: InworldMessageTalk):
+	$Interface.set_text($Player/InworldPlayer.target_character.brain, talk.text)
+	if(!talk.chunk.is_empty()):
+		var audio_wav = AudioStreamWAV.new()
+		talk.chunk.decode_u16(0)
+		audio_wav.data = talk.chunk;
+		audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
+		audio_wav.mix_rate = 16000;
 		
+		$Interface/AudioStreamPlayer.stream = audio_wav;
+		$Interface/AudioStreamPlayer.play();
+
+func _on_audio_stream_player_finished():
+	$Player/InworldPlayer.target_character.finish_current_message_talk()
+
+
+func _on_inworld_player_target_message_stt(stt):
+	if (stt.complete):
+		$Interface.set_text("Character", stt.text)
