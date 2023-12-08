@@ -11,6 +11,7 @@ func _ready():
 	screen_size = get_viewport_rect().size
 	screen_size.x -= 64
 	screen_size.y -= 64
+	screen_size.y -= 56
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

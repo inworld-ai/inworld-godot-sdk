@@ -12,15 +12,22 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_pt2po")
 
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_top = 1024.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.517647, 0.776471, 0.411765, 1)
+
 [node name="TextInput" parent="." instance=ExtResource("1_3djxw")]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_right = 0.0
 offset_left = 32.0
-offset_top = -64.0
+offset_top = -48.0
 offset_right = 32.0
-offset_bottom = -64.0
+offset_bottom = -48.0
 grow_horizontal = 1
 grow_vertical = 0
 

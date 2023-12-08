@@ -26,3 +26,7 @@ func _on_audio_stream_player_2d_finished():
 func _on_inworld_character_interrupted():
 	$Label.text = ""
 	$AudioStreamPlayer2D.stop()
+
+
+func _on_inworld_character_message_emotion(emotion : InworldMessageEmotion):
+	$Emoji.set_emotion(emotion.behavior)

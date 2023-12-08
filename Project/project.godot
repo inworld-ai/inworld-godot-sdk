@@ -22,8 +22,9 @@ driver/enable_input=true
 
 [display]
 
-window/size/viewport_width=1728
-window/size/viewport_height=948
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=3
 
 [input]
 

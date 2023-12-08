@@ -14,11 +14,11 @@ line_edit = NodePath("HBoxContainer/LineEdit")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
-offset_right = 40.0
+offset_right = 1080.0
 offset_bottom = 40.0
 
 [node name="LineEdit" type="LineEdit" parent="HBoxContainer"]
-custom_minimum_size = Vector2(480, 0)
+custom_minimum_size = Vector2(824, 0)
 layout_mode = 2
 
 [node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
@@ -26,12 +26,9 @@ custom_minimum_size = Vector2(15, 0)
 layout_mode = 2
 
 [node name="Send Button" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "Send
 "
-
-[node name="VSeparator2" type="VSeparator" parent="HBoxContainer"]
-custom_minimum_size = Vector2(15, 0)
-layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer/Send Button" to="." method="_on_send_button_pressed"]
