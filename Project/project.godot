@@ -20,6 +20,11 @@ config/icon="res://icon.svg"
 
 driver/enable_input=true
 
+[display]
+
+window/size/viewport_width=1728
+window/size/viewport_height=948
+
 [input]
 
 move_right={

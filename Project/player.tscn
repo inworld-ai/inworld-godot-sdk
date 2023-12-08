@@ -1,23 +1,24 @@
-[gd_scene load_steps=4 format=3 uid="uid://jvf1fo60ethj"]
+[gd_scene load_steps=3 format=3 uid="uid://jvf1fo60ethj"]
 
 [ext_resource type="Script" path="res://Player.gd" id="1_hlyya"]
-[ext_resource type="Texture2D" uid="uid://scdihch4471h" path="res://redbox.jpg" id="2_xvfws"]
+[ext_resource type="Texture2D" uid="uid://dbn8bvtkf5cjf" path="res://sprites/characters/player.png" id="1_nqw6s"]
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_s3qbp"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("2_xvfws")
-}],
-"loop": true,
-"name": &"walk",
-"speed": 5.0
-}]
-
-[node name="Player" type="Area2D"]
+[node name="Player" type="Sprite2D"]
+scale = Vector2(4, 4)
+texture = ExtResource("1_nqw6s")
+centered = false
 script = ExtResource("1_hlyya")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-scale = Vector2(0.1, 0.1)
-sprite_frames = SubResource("SpriteFrames_s3qbp")
-animation = &"walk"
+[node name="Label" type="Label" parent="."]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -13.0
+offset_right = 144.0
+offset_bottom = 10.0
+grow_vertical = 2
+scale = Vector2(0.25, 0.25)
+
+[node name="Timer" type="Timer" parent="."]
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

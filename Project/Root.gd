@@ -1,24 +1,16 @@
 extends Node
 
-var mobs
-var characters = [
-	"godot",
-	"carey",
-	"wilson",
-	"vik"
-]
-var current_name: String
+var mobs : Array
+var current_mob : Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	mobs = [
-		$Godot,
+		$Russ,
 		$Carey,
 		$Wilson,
 		$Vik,
 	]
-	$Player.start($PlayerStartPosition.position)
-	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -29,32 +21,20 @@ func _process(delta):
 	for m in mobs:
 		var m_pos = m.position
 		dist = player_pos.distance_to(m.position)
-		if dist < max_dist:
+		if dist < max_dist && dist < 150:
 			closest_mob = m
 			max_dist = dist
 	
-	if max_dist < 150 and (current_name != closest_mob.myName or current_name == null):
-		print("Setting partner to: " + closest_mob.myName)
-		current_name = closest_mob.myName
-		$Player/InworldPlayer.target_character = closest_mob.get_node("InworldCharacter")
-	#else:
-		#$Player.clear_conversation_partner()
-
-func _on_inworld_player_target_message_talk(talk: InworldMessageTalk):
-	$Interface.set_text($Player/InworldPlayer.target_character.get_name(), talk.text)
-	if(!talk.chunk.is_empty()):
-		var audio_wav = AudioStreamWAV.new()
-		audio_wav.data = talk.chunk;
-		audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
-		audio_wav.mix_rate = 22000;
-		
-		$Interface/AudioStreamPlayer.stream = audio_wav;
-		$Interface/AudioStreamPlayer.play();
-
-func _on_audio_stream_player_finished():
-	$Player/InworldPlayer.target_character.finish_current_message_talk()
-
-
-func _on_inworld_player_target_message_stt(stt):
-	if (stt.complete):
-		$Interface.set_text($Player/InworldPlayer.name, stt.text)
+	if (current_mob != closest_mob and closest_mob != null):
+		if(current_mob != null):
+			current_mob.texture = current_mob.unselected_texture;
+		current_mob = closest_mob
+		current_mob.texture = current_mob.selected_texture;
+		$Player.set_target(closest_mob.get_node("InworldCharacter"))
+	
+	if closest_mob == null:
+		if(current_mob != null):
+			current_mob.character.interrupt()
+			current_mob.texture = current_mob.unselected_texture
+		current_mob = null;
+		$Player.set_target(null)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://scdihch4471h"
-path="res://.godot/imported/redbox.jpg-cfeb471f2f7fdb5a1433d98d149c1a42.ctex"
+uid="uid://bamkfs6pciwy3"
+path="res://.godot/imported/wilson.png-64ca7da4f3aa0f820914718009eb04fe.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://redbox.jpg"
-dest_files=["res://.godot/imported/redbox.jpg-cfeb471f2f7fdb5a1433d98d149c1a42.ctex"]
+source_file="res://sprites/characters/wilson.png"
+dest_files=["res://.godot/imported/wilson.png-64ca7da4f3aa0f820914718009eb04fe.ctex"]
 
 [params]
 

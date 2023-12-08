@@ -34,10 +34,4 @@ text = "Send
 custom_minimum_size = Vector2(15, 0)
 layout_mode = 2
 
-[node name="Record" type="Button" parent="HBoxContainer"]
-layout_mode = 2
-text = "Record"
-
 [connection signal="pressed" from="HBoxContainer/Send Button" to="." method="_on_send_button_pressed"]
-[connection signal="button_down" from="HBoxContainer/Record" to="." method="_on_record_button_down"]
-[connection signal="button_up" from="HBoxContainer/Record" to="." method="_on_record_button_up"]

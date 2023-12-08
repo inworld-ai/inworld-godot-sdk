@@ -20,9 +20,8 @@
 [node name="Root" type="Node"]
 script = ExtResource("1_iuwmo")
 
-[node name="Interface" parent="." node_paths=PackedStringArray("player", "inworld_player") instance=ExtResource("2_swbl7")]
+[node name="Interface" parent="." node_paths=PackedStringArray("inworld_player") instance=ExtResource("2_swbl7")]
 theme = SubResource("Theme_oxc0t")
-player = NodePath("../Player")
 inworld_player = NodePath("../Player/InworldPlayer")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Interface"]
@@ -77,13 +76,12 @@ selected_texture = ExtResource("12_6wy46")
 brain = "workspaces/godot/characters/vik"
 session = NodePath("../../InworldSession")
 
-[node name="Player" parent="." node_paths=PackedStringArray("player") instance=ExtResource("4_tplsn")]
+[node name="Player" parent="." instance=ExtResource("4_tplsn")]
 position = Vector2(128, 128)
-player = NodePath("InworldPlayer")
+speed = 200
 
 [node name="InworldPlayer" type="InworldPlayer" parent="Player"]
 name = "Matthew"
-talking = true
 
 [node name="Background" type="Sprite2D" parent="."]
 z_index = -1
@@ -93,12 +91,5 @@ centered = false
 
 [connection signal="finished" from="Interface/AudioStreamPlayer" to="." method="_on_audio_stream_player_finished"]
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
-[connection signal="interrupted" from="Russ/InworldCharacter" to="Russ" method="_on_inworld_character_interrupted"]
-[connection signal="message_talk" from="Russ/InworldCharacter" to="Russ" method="_on_inworld_character_message_talk"]
-[connection signal="interrupted" from="Carey/InworldCharacter" to="Carey" method="_on_inworld_character_interrupted"]
-[connection signal="message_talk" from="Carey/InworldCharacter" to="Carey" method="_on_inworld_character_message_talk"]
-[connection signal="interrupted" from="Wilson/InworldCharacter" to="Wilson" method="_on_inworld_character_interrupted"]
-[connection signal="message_talk" from="Wilson/InworldCharacter" to="Wilson" method="_on_inworld_character_message_talk"]
-[connection signal="interrupted" from="Vik/InworldCharacter" to="Vik" method="_on_inworld_character_interrupted"]
-[connection signal="message_talk" from="Vik/InworldCharacter" to="Vik" method="_on_inworld_character_message_talk"]
+[connection signal="target_message_control" from="Player/InworldPlayer" to="Player" method="_on_inworld_player_target_message_control"]
 [connection signal="target_message_stt" from="Player/InworldPlayer" to="Player" method="_on_inworld_player_target_message_stt"]
