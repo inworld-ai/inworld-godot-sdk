@@ -7,7 +7,7 @@ extends Sprite2D
 
 
 func _on_inworld_character_message_talk(talk : InworldMessageTalk):
-	$Label.text = talk.text
+	$Speech.text = talk.text
 	
 	var audio_wav = AudioStreamWAV.new()
 	audio_wav.data = talk.chunk;
@@ -19,14 +19,19 @@ func _on_inworld_character_message_talk(talk : InworldMessageTalk):
 
 
 func _on_audio_stream_player_2d_finished():
-	$Label.text = ""
+	$Speech.text = ""
 	character.finish_current_message_talk()
 
 
 func _on_inworld_character_interrupted():
-	$Label.text = ""
+	$Speech.text = ""
 	$AudioStreamPlayer2D.stop()
 
 
 func _on_inworld_character_message_emotion(emotion : InworldMessageEmotion):
 	$Emoji.set_emotion(emotion.behavior)
+
+
+func _on_inworld_session_established(established : bool):
+	print(character.get_name())
+	$Name.text = character.get_name()

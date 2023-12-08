@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmtj7hiiixsa4"
-path="res://.godot/imported/vik_selected.png-5cf3f0091d18e6da2cf508f4efcd5615.ctex"
+uid="uid://cuf4e3aockek1"
+path="res://.godot/imported/carey.png-7fab7c092237434935d47526f066eae0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/characters/vik_selected.png"
-dest_files=["res://.godot/imported/vik_selected.png-5cf3f0091d18e6da2cf508f4efcd5615.ctex"]
+source_file="res://sprites/characters/carey/carey.png"
+dest_files=["res://.godot/imported/carey.png-7fab7c092237434935d47526f066eae0.ctex"]
 
 [params]
 

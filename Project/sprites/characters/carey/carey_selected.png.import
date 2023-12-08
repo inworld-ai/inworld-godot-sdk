@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://g6qex8q4m70w"
-path="res://.godot/imported/wilson_selected.png-7177fedcfda1f279b45cfc5cc0653561.ctex"
+uid="uid://dk4v4chr61ugh"
+path="res://.godot/imported/carey_selected.png-a11415ca11d7ea02dad04a02136d831e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/characters/wilson_selected.png"
-dest_files=["res://.godot/imported/wilson_selected.png-7177fedcfda1f279b45cfc5cc0653561.ctex"]
+source_file="res://sprites/characters/carey/carey_selected.png"
+dest_files=["res://.godot/imported/carey_selected.png-a11415ca11d7ea02dad04a02136d831e.ctex"]
 
 [params]
 

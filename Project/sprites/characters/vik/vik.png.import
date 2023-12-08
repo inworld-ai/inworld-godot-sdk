@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d0yonrj8f68r0"
-path="res://.godot/imported/russ_selected.png-5d43b2c3a9312a73239a96228168697b.ctex"
+uid="uid://7fp76neqvryh"
+path="res://.godot/imported/vik.png-6b046723c5a6cfb5e80d8790ce1b7fb0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/characters/russ_selected.png"
-dest_files=["res://.godot/imported/russ_selected.png-5d43b2c3a9312a73239a96228168697b.ctex"]
+source_file="res://sprites/characters/vik/vik.png"
+dest_files=["res://.godot/imported/vik.png-6b046723c5a6cfb5e80d8790ce1b7fb0.ctex"]
 
 [params]
 

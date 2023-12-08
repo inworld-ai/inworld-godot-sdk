@@ -1,19 +1,16 @@
-extends Sprite2D
+extends AnimatedSprite2D
 
 @export var speed = 200
-
 @export var player : InworldPlayer
 
 var screen_size : Vector2
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	screen_size = get_viewport_rect().size
 	screen_size.x -= 64
 	screen_size.y -= 64
 	screen_size.y -= 56
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	var velocity = Vector2.ZERO # The player's movement vector.
 	if Input.is_action_pressed("move_right"):
@@ -27,24 +24,31 @@ func _process(delta):
 
 	if velocity.length() > 0:
 		velocity = velocity.normalized() * speed
-		
+		animation = "walk"
+		play()
+	else:
+		animation = "default"
+		stop()
+
 	position += velocity * delta
 	position = position.clamp(Vector2.ZERO, screen_size)
 
 func set_target(target : InworldCharacter):
-	$Label.text = ""
+	$Speech.text = ""
 	player.target_character = target
 
 func send_text(text : String):
-	$Label.text = text
+	$Speech.text = text
 	$Timer.start();
-	
 
 func _on_inworld_player_target_message_stt(stt : InworldMessageSpeechToText):
-	$Label.text = stt.text
+	$Speech.text = stt.text
 	if(stt.complete):
 		$Timer.start()
 
-
 func _on_timer_timeout():
-	$Label.text = ""
+	$Speech.text = ""
+
+
+func _on_inworld_session_established(established):
+	$Name.text = player.name

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dbukctgc3um0h"
-path="res://.godot/imported/russ.png-6c3ea6cc81d57e2d24adba30d1882fbf.ctex"
+uid="uid://f0hjkree20t4"
+path="res://.godot/imported/player_l.png-52b02ca3386b0ba6bb321377e0818754.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/characters/russ.png"
-dest_files=["res://.godot/imported/russ.png-6c3ea6cc81d57e2d24adba30d1882fbf.ctex"]
+source_file="res://sprites/characters/player/walk/player_l.png"
+dest_files=["res://.godot/imported/player_l.png-52b02ca3386b0ba6bb321377e0818754.ctex"]
 
 [params]
 
