@@ -72,7 +72,7 @@ String InworldCharacter::get_brain() const {
 }
 
 String InworldCharacter::get_name() const {
-	if (session == nullptr || !session->get_connected()) {
+	if (session == nullptr || !session->get_established()) {
 		return {};
 	}
 	return session->get_name(brain);

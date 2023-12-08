@@ -1,71 +1,113 @@
-[gd_scene load_steps=7 format=3 uid="uid://drem16al40jf4"]
+[gd_scene load_steps=16 format=3 uid="uid://drem16al40jf4"]
 
 [ext_resource type="Script" path="res://Root.gd" id="1_iuwmo"]
 [ext_resource type="PackedScene" uid="uid://cesm2ftmwtcnp" path="res://interface/interface.tscn" id="2_swbl7"]
 [ext_resource type="Script" path="res://InworldSession.gd" id="3_2i3g7"]
 [ext_resource type="PackedScene" uid="uid://jvf1fo60ethj" path="res://player.tscn" id="4_tplsn"]
 [ext_resource type="PackedScene" uid="uid://btph3gxfonssl" path="res://mob.tscn" id="5_87lf8"]
+[ext_resource type="Texture2D" uid="uid://dbukctgc3um0h" path="res://sprites/characters/russ/russ.png" id="5_mxd2o"]
+[ext_resource type="Texture2D" uid="uid://cuf4e3aockek1" path="res://sprites/characters/carey/carey.png" id="6_5s83c"]
+[ext_resource type="Texture2D" uid="uid://d0yonrj8f68r0" path="res://sprites/characters/russ/russ_selected.png" id="6_aaifa"]
+[ext_resource type="Texture2D" uid="uid://bamkfs6pciwy3" path="res://sprites/characters/wilson/wilson.png" id="7_bn5su"]
+[ext_resource type="Texture2D" uid="uid://7fp76neqvryh" path="res://sprites/characters/vik/vik.png" id="8_bcegg"]
+[ext_resource type="Texture2D" uid="uid://dk4v4chr61ugh" path="res://sprites/characters/carey/carey_selected.png" id="8_jdg0a"]
+[ext_resource type="Texture2D" uid="uid://g6qex8q4m70w" path="res://sprites/characters/wilson/wilson_selected.png" id="10_oi4ud"]
+[ext_resource type="Texture2D" uid="uid://bmtj7hiiixsa4" path="res://sprites/characters/vik/vik_selected.png" id="12_6wy46"]
+[ext_resource type="Texture2D" uid="uid://bvfavw3ljsnd4" path="res://sprites/map.png" id="15_jtsm1"]
 
 [sub_resource type="Theme" id="Theme_oxc0t"]
 
 [node name="Root" type="Node"]
 script = ExtResource("1_iuwmo")
 
-[node name="Interface" parent="." node_paths=PackedStringArray("inworld_player") instance=ExtResource("2_swbl7")]
+[node name="Interface" parent="." node_paths=PackedStringArray("player", "inworld_player") instance=ExtResource("2_swbl7")]
 theme = SubResource("Theme_oxc0t")
+player = NodePath("../Player")
 inworld_player = NodePath("../Player/InworldPlayer")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Interface"]
 
-[node name="InworldSession" type="InworldSession" parent="."]
+[node name="InworldSession" type="InworldSession" parent="." node_paths=PackedStringArray("player")]
+player = NodePath("../Player/InworldPlayer")
 scene = "workspaces/godot/scenes/godot"
 auth = "NElaNFhqTkVTU2tzNG1QSHVPcUQyS1ZHZlg5ZWk0MzQ6MHlqbXV5VGVpY2s4YUM5OVhLR1doTE5VaThFMnRjWXBTZDd4YTJVYTJuV1hZd0oyTnpLaFpyTXI5c0llYlF0Uw=="
 script = ExtResource("3_2i3g7")
 
-[node name="PlayerStartPosition" type="Marker2D" parent="."]
-position = Vector2(300, 500)
-
-[node name="Godot" parent="." node_paths=PackedStringArray("character") instance=ExtResource("5_87lf8")]
-position = Vector2(1050, 400)
-myName = "godot"
+[node name="Russ" parent="." node_paths=PackedStringArray("character") instance=ExtResource("5_87lf8")]
+position = Vector2(1280, 896)
+texture = ExtResource("5_mxd2o")
 character = NodePath("InworldCharacter")
+unselected_texture = ExtResource("5_mxd2o")
+selected_texture = ExtResource("6_aaifa")
 
-[node name="InworldCharacter" type="InworldCharacter" parent="Godot" node_paths=PackedStringArray("session")]
-brain = "workspaces/godot/characters/godot"
+[node name="InworldCharacter" type="InworldCharacter" parent="Russ" node_paths=PackedStringArray("session")]
+brain = "workspaces/godot/characters/russ"
 session = NodePath("../../InworldSession")
 
 [node name="Carey" parent="." node_paths=PackedStringArray("character") instance=ExtResource("5_87lf8")]
-position = Vector2(299, 300)
-myName = "carey"
+position = Vector2(768, 256)
+texture = ExtResource("6_5s83c")
 character = NodePath("InworldCharacter")
+unselected_texture = ExtResource("6_5s83c")
+selected_texture = ExtResource("8_jdg0a")
 
 [node name="InworldCharacter" type="InworldCharacter" parent="Carey" node_paths=PackedStringArray("session")]
 brain = "workspaces/godot/characters/carey"
 session = NodePath("../../InworldSession")
 
 [node name="Wilson" parent="." node_paths=PackedStringArray("character") instance=ExtResource("5_87lf8")]
-position = Vector2(700, 200)
-myName = "wilson"
+position = Vector2(1344, 416)
+texture = ExtResource("7_bn5su")
 character = NodePath("InworldCharacter")
+unselected_texture = ExtResource("7_bn5su")
+selected_texture = ExtResource("10_oi4ud")
 
 [node name="InworldCharacter" type="InworldCharacter" parent="Wilson" node_paths=PackedStringArray("session")]
-brain = "workspaces/godot/characters/godot"
+brain = "workspaces/godot/characters/wilson"
 session = NodePath("../../InworldSession")
 
 [node name="Vik" parent="." node_paths=PackedStringArray("character") instance=ExtResource("5_87lf8")]
-position = Vector2(100, 400)
-myName = "vik"
+position = Vector2(576, 704)
+texture = ExtResource("8_bcegg")
 character = NodePath("InworldCharacter")
+unselected_texture = ExtResource("8_bcegg")
+selected_texture = ExtResource("12_6wy46")
 
 [node name="InworldCharacter" type="InworldCharacter" parent="Vik" node_paths=PackedStringArray("session")]
-brain = "workspaces/godot/characters/godot"
+brain = "workspaces/godot/characters/vik"
 session = NodePath("../../InworldSession")
 
-[node name="Player" parent="." instance=ExtResource("4_tplsn")]
+[node name="Player" parent="." node_paths=PackedStringArray("player") instance=ExtResource("4_tplsn")]
+position = Vector2(128, 128)
+player = NodePath("InworldPlayer")
 
 [node name="InworldPlayer" type="InworldPlayer" parent="Player"]
+name = "Matthew"
+talking = true
+
+[node name="Map" type="Sprite2D" parent="."]
+z_index = -1
+scale = Vector2(4, 4)
+texture = ExtResource("15_jtsm1")
+centered = false
 
 [connection signal="finished" from="Interface/AudioStreamPlayer" to="." method="_on_audio_stream_player_finished"]
 [connection signal="connection_state_changed" from="InworldSession" to="InworldSession" method="_on_connection_state_changed"]
-[connection signal="target_message_stt" from="Player/InworldPlayer" to="." method="_on_inworld_player_target_message_stt"]
-[connection signal="target_message_talk" from="Player/InworldPlayer" to="." method="_on_inworld_player_target_message_talk"]
+[connection signal="established" from="InworldSession" to="Russ" method="_on_inworld_session_established"]
+[connection signal="established" from="InworldSession" to="Carey" method="_on_inworld_session_established"]
+[connection signal="established" from="InworldSession" to="Wilson" method="_on_inworld_session_established"]
+[connection signal="established" from="InworldSession" to="Vik" method="_on_inworld_session_established"]
+[connection signal="established" from="InworldSession" to="Player" method="_on_inworld_session_established"]
+[connection signal="interrupted" from="Russ/InworldCharacter" to="Russ" method="_on_inworld_character_interrupted"]
+[connection signal="message_emotion" from="Russ/InworldCharacter" to="Russ" method="_on_inworld_character_message_emotion"]
+[connection signal="message_talk" from="Russ/InworldCharacter" to="Russ" method="_on_inworld_character_message_talk"]
+[connection signal="interrupted" from="Carey/InworldCharacter" to="Carey" method="_on_inworld_character_interrupted"]
+[connection signal="message_emotion" from="Carey/InworldCharacter" to="Carey" method="_on_inworld_character_message_emotion"]
+[connection signal="message_talk" from="Carey/InworldCharacter" to="Carey" method="_on_inworld_character_message_talk"]
+[connection signal="interrupted" from="Wilson/InworldCharacter" to="Wilson" method="_on_inworld_character_interrupted"]
+[connection signal="message_emotion" from="Wilson/InworldCharacter" to="Wilson" method="_on_inworld_character_message_emotion"]
+[connection signal="message_talk" from="Wilson/InworldCharacter" to="Wilson" method="_on_inworld_character_message_talk"]
+[connection signal="interrupted" from="Vik/InworldCharacter" to="Vik" method="_on_inworld_character_interrupted"]
+[connection signal="message_emotion" from="Vik/InworldCharacter" to="Vik" method="_on_inworld_character_message_emotion"]
+[connection signal="message_talk" from="Vik/InworldCharacter" to="Vik" method="_on_inworld_character_message_talk"]
+[connection signal="target_message_stt" from="Player/InworldPlayer" to="Player" method="_on_inworld_player_target_message_stt"]

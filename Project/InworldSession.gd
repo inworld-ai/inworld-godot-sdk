@@ -4,8 +4,6 @@ func _ready():
 	_on_connection_state_changed(get_connection_state())
 	start()
 
-
-
 func _on_connection_state_changed(connection_state : InworldSession.ConnectionState):
 	match connection_state:
 		InworldSession.ConnectionState.IDLE:
