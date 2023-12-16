@@ -54,12 +54,14 @@ void initialize_inworld_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<InworldEventText>();
 	ClassDB::register_class<InworldEventData>();
 	ClassDB::register_class<InworldEventDataAudio>();
+	ClassDB::register_class<InworldEventDataAudio::Phoneme>();
 	ClassDB::register_class<InworldEventEmotion>();
 	ClassDB::register_class<InworldEventTrigger>();
 	ClassDB::register_class<InworldEventControl>();
 
 	ClassDB::register_abstract_class<InworldMessage>();
 	ClassDB::register_class<InworldMessageTalk>();
+	ClassDB::register_class<InworldMessageTalk::Viseme>();
 	ClassDB::register_class<InworldMessageSpeechToText>();
 	ClassDB::register_class<InworldMessageEmotion>();
 	ClassDB::register_class<InworldMessageTrigger>();

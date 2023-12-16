@@ -32,10 +32,20 @@ public:
 		RECONNECTING = 6,
 	};
 
+	enum SceneType {
+		SCENE = 0,
+		SINGLE_CHARACTER = 1,
+	};
+
 private:
 	InworldPlayer *player;
-	String scene;
+
+	String project_name;
+	String workspace_name;
+	SceneType scene_type;
+	String scene_name;
 	String auth;
+
 	bool connected;
 	bool established;
 
@@ -53,7 +63,7 @@ public:
 	bool get_connected() const;
 	bool get_established() const;
 
-	String get_name(String p_brain) const;
+	String get_given_name(String p_brain) const;
 
 	void send_text(String p_brain, String p_text);
 	void send_trigger(String p_brain, String p_name, Dictionary p_params);
@@ -79,8 +89,14 @@ public:
 private:
 	void set_player(InworldPlayer *p_player);
 	InworldPlayer *get_player() const;
-	void set_scene(String p_scene);
-	String get_scene() const;
+	void set_project_name(String p_project_name);
+	String get_project_name() const;
+	void set_workspace_name(String p_workspace_name);
+	String get_workspace_name() const;
+	void set_scene_type(SceneType p_scene_type);
+	SceneType get_scene_type() const;
+	void set_scene_name(String p_scene_name);
+	String get_scene_name() const;
 	void set_auth(String p_auth);
 	String get_auth() const;
 
@@ -94,5 +110,6 @@ private:
 } // namespace godot
 
 VARIANT_ENUM_CAST(InworldSession::ConnectionState)
+VARIANT_ENUM_CAST(InworldSession::SceneType)
 
 #endif // INWORLD_SESSION_H

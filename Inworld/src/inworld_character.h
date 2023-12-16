@@ -2,8 +2,7 @@
 #define INWORLD_CHARACTER_H
 
 #include <godot_cpp/classes/node.hpp>
-
-#include "inworld_talk_queue.h"
+#include <godot_cpp/templates/vector.hpp>
 
 namespace godot {
 class InworldSession;
@@ -13,12 +12,43 @@ class InworldEventDataAudio;
 class InworldEventEmotion;
 class InworldEventTrigger;
 class InworldEventControl;
+class InworldTalkQueue;
+class InworldMessageTalk;
 
 class InworldCharacter : public Node {
 	GDCLASS(InworldCharacter, Node);
 
 protected:
 	static void _bind_methods();
+
+public:
+	enum EmotionBehavior {
+		AFFECTION = 0,
+		ANGER = 1,
+		BELLIGERENCE = 2,
+		CONTEMPT = 3,
+		CRITICISM = 4,
+		DEFENSIVENESS = 5,
+		DISGUST = 6,
+		DOMINEERING = 7,
+		HUMOR = 8,
+		INTEREST = 9,
+		JOY = 10,
+		NEUTRAL = 11,
+		SADNESS = 12,
+		STONEWALLING = 13,
+		SURPRISE = 14,
+		TENSE = 15,
+		TENSION = 16,
+		VALIDATION = 17,
+		WHINING = 18,
+	};
+
+	enum EmotionStrength {
+		WEAK = 0,
+		NORMAL = 1,
+		STRONG = 2,
+	};
 
 private:
 	String brain;
@@ -36,7 +66,7 @@ public:
 	void set_brain(String p_brain);
 	String get_brain() const;
 
-	String get_name() const;
+	String get_given_name() const;
 
 	void set_session(InworldSession *p_session);
 	InworldSession *get_session() const;
@@ -69,5 +99,8 @@ private:
 };
 
 } // namespace godot
+
+VARIANT_ENUM_CAST(InworldCharacter::EmotionBehavior)
+VARIANT_ENUM_CAST(InworldCharacter::EmotionStrength)
 
 #endif // INWORLD_CHARACTER_H

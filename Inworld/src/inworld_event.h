@@ -1,9 +1,12 @@
 #ifndef INWORLD_EVENT_H
 #define INWORLD_EVENT_H
 
+#include "inworld_character.h"
+
 #include "Packets.h"
 
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
 
 namespace godot {
 
@@ -82,12 +85,34 @@ public:
 class InworldEventDataAudio : public InworldEventData {
 	GDCLASS(InworldEventDataAudio, InworldEventData)
 
+public:
+	class Phoneme : public Object {
+		GDCLASS(Phoneme, Object)
+
+	protected:
+		static void _bind_methods();
+
+	public:
+		Phoneme();
+		~Phoneme();
+
+		StringName code;
+		float time_stamp;
+
+		StringName get_code() const;
+		float get_time_stamp() const;
+	};
+
 protected:
 	static void _bind_methods();
 
 public:
 	InworldEventDataAudio();
 	~InworldEventDataAudio();
+
+	TypedArray<Phoneme> phonemes;
+
+	TypedArray<Phoneme> get_phonemes() const;
 };
 
 class InworldEventEmotion : public InworldEvent {
@@ -100,11 +125,11 @@ public:
 	InworldEventEmotion();
 	~InworldEventEmotion();
 
-	StringName behavior;
-	StringName strength;
+	InworldCharacter::EmotionBehavior behavior;
+	InworldCharacter::EmotionStrength strength;
 
-	StringName get_behavior() const;
-	StringName get_strength() const;
+	InworldCharacter::EmotionBehavior get_behavior() const;
+	InworldCharacter::EmotionStrength get_strength() const;
 };
 
 class InworldEventTrigger : public InworldEvent {

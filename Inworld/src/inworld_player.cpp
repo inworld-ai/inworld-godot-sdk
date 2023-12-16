@@ -10,9 +10,9 @@
 using namespace godot;
 
 void InworldPlayer::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_name", "name"), &InworldPlayer::set_name);
-	ClassDB::bind_method(D_METHOD("get_name"), &InworldPlayer::get_name);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
+	ClassDB::bind_method(D_METHOD("set_given_name", "given_name"), &InworldPlayer::set_given_name);
+	ClassDB::bind_method(D_METHOD("get_given_name"), &InworldPlayer::get_given_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "given_name"), "set_given_name", "get_given_name");
 
 	ClassDB::bind_method(D_METHOD("set_target_character", "target_character"), &InworldPlayer::set_target_character);
 	ClassDB::bind_method(D_METHOD("get_target_character"), &InworldPlayer::get_target_character);
@@ -22,21 +22,12 @@ void InworldPlayer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_talking"), &InworldPlayer::get_talking);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "talking"), "set_talking", "get_talking");
 
-	ClassDB::bind_method(D_METHOD("on_target_message_talk", "talk"), &InworldPlayer::on_target_message_talk);
-	ClassDB::bind_method(D_METHOD("on_target_message_stt", "stt"), &InworldPlayer::on_target_message_stt);
-	ClassDB::bind_method(D_METHOD("on_target_message_emotion", "emotion"), &InworldPlayer::on_target_message_emotion);
-	ClassDB::bind_method(D_METHOD("on_target_message_trigger", "trigger"), &InworldPlayer::on_target_message_trigger);
-	ClassDB::bind_method(D_METHOD("on_target_message_control", "control"), &InworldPlayer::on_target_message_control);
-
-	ADD_SIGNAL(MethodInfo("target_message_talk", PropertyInfo(Variant::OBJECT, "talk")));
-	ADD_SIGNAL(MethodInfo("target_message_stt", PropertyInfo(Variant::OBJECT, "stt")));
-	ADD_SIGNAL(MethodInfo("target_message_emotion", PropertyInfo(Variant::OBJECT, "emotion")));
-	ADD_SIGNAL(MethodInfo("target_message_trigger", PropertyInfo(Variant::OBJECT, "trigger")));
-	ADD_SIGNAL(MethodInfo("target_message_control", PropertyInfo(Variant::OBJECT, "control")));
+	ADD_SIGNAL(MethodInfo("conversing_start", PropertyInfo(Variant::OBJECT, "character")));
+	ADD_SIGNAL(MethodInfo("conversing_end", PropertyInfo(Variant::OBJECT, "character")));
 }
 
 InworldPlayer::InworldPlayer() :
-		Node{}, name{ "Player" }, target_character{ nullptr }, microphone{ nullptr }, talking{ false } {
+		Node{}, given_name{ "Player" }, target_character{ nullptr }, microphone{ nullptr }, talking{ false } {
 	microphone = memnew(InworldMicrophone);
 }
 
@@ -59,24 +50,30 @@ void InworldPlayer::_process(double_t delta) {
 	}
 }
 
-void InworldPlayer::set_name(String p_name) {
-	name = p_name;
+void InworldPlayer::set_given_name(String p_given_name) {
+	given_name = p_given_name;
 }
 
-String InworldPlayer::get_name() const {
-	return name;
+String InworldPlayer::get_given_name() const {
+	return given_name;
 }
 
 void InworldPlayer::set_target_character(InworldCharacter *p_target_character) {
 	if (talking) {
 		_stop_talk_to_target();
 	}
-	_unbind_from_target();
+	if (target_character) {
+		emit_signal("conversing_end", target_character);
+		target_character->emit_signal("conversing_end", this);
+	}
 	target_character = p_target_character;
+	if (target_character) {
+		emit_signal("conversing_start", target_character);
+		target_character->emit_signal("conversing_start", this);
+	}
 	if (talking) {
 		_start_talk_to_target();
 	}
-	_bind_to_target();
 }
 
 InworldCharacter *InworldPlayer::get_target_character() const {
@@ -111,48 +108,4 @@ void InworldPlayer::_stop_talk_to_target() {
 	target_character->stop_audio_session();
 	microphone->set_hot(false);
 	set_process(false);
-}
-
-void InworldPlayer::_bind_to_target() {
-	if (target_character == nullptr) {
-		return;
-	}
-
-	target_character->connect("message_talk", Callable(this, "on_target_message_talk"));
-	target_character->connect("message_stt", Callable(this, "on_target_message_stt"));
-	target_character->connect("message_emotion", Callable(this, "on_target_message_emotion"));
-	target_character->connect("message_trigger", Callable(this, "on_target_message_trigger"));
-	target_character->connect("message_control", Callable(this, "on_target_message_control"));
-}
-
-void InworldPlayer::_unbind_from_target() {
-	if (target_character == nullptr) {
-		return;
-	}
-
-	target_character->disconnect("message_talk", Callable(this, "on_target_message_talk"));
-	target_character->disconnect("message_stt", Callable(this, "on_target_message_stt"));
-	target_character->disconnect("message_emotion", Callable(this, "on_target_message_emotion"));
-	target_character->disconnect("message_trigger", Callable(this, "on_target_message_trigger"));
-	target_character->disconnect("message_control", Callable(this, "on_target_message_control"));
-}
-
-void InworldPlayer::on_target_message_talk(Ref<InworldMessageTalk> p_message_talk) {
-	emit_signal("target_message_talk", p_message_talk);
-}
-
-void InworldPlayer::on_target_message_stt(Ref<InworldMessageSpeechToText> p_message_stt) {
-	emit_signal("target_message_stt", p_message_stt);
-}
-
-void InworldPlayer::on_target_message_emotion(Ref<InworldMessageEmotion> p_message_emotion) {
-	emit_signal("target_message_emotion", p_message_emotion);
-}
-
-void InworldPlayer::on_target_message_trigger(Ref<InworldMessageTrigger> p_message_trigger) {
-	emit_signal("target_message_trigger", p_message_trigger);
-}
-
-void InworldPlayer::on_target_message_control(Ref<InworldMessageControl> p_message_control) {
-	emit_signal("target_message_control", p_message_control);
 }

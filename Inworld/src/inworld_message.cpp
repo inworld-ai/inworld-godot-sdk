@@ -30,17 +30,23 @@ String InworldMessage::get_utterance_id() const {
 void InworldMessageTalk::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_text"), &InworldMessageTalk::get_text);
 	ClassDB::bind_method(D_METHOD("get_chunk"), &InworldMessageTalk::get_chunk);
+	ClassDB::bind_method(D_METHOD("get_visemes"), &InworldMessageTalk::get_visemes);
 	ClassDB::bind_method(D_METHOD("get_ready"), &InworldMessageTalk::get_ready);
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "text"), "", "get_text");
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_BYTE_ARRAY, "chunk"), "", "get_chunk");
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "visemes"), "", "get_visemes");
 }
 
 InworldMessageTalk::InworldMessageTalk() :
-		InworldMessage{}, text{}, chunk{} {
+		InworldMessage{}, text{}, chunk{}, visemes{} {
 }
 
 InworldMessageTalk::~InworldMessageTalk() {
+	for(uint32_t i = 0; i < visemes.size(); ++i) {
+		InworldMessageTalk::Viseme *viseme = Object::cast_to<InworldMessageTalk::Viseme>(&*visemes[i]);
+		memdelete(viseme);
+	}
 }
 
 String InworldMessageTalk::get_text() const {
@@ -51,9 +57,37 @@ PackedByteArray InworldMessageTalk::get_chunk() const {
 	return chunk;
 }
 
+TypedArray<InworldMessageTalk::Viseme> InworldMessageTalk::get_visemes() const {
+	return visemes;
+}
+
 bool InworldMessageTalk::get_ready() const {
 	return !text.is_empty() && !chunk.is_empty();
 }
+
+void InworldMessageTalk::Viseme::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_code"), &InworldMessageTalk::Viseme::get_code);
+	ClassDB::bind_method(D_METHOD("get_time_stamp"), &InworldMessageTalk::Viseme::get_time_stamp);
+
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "code"), "", "get_code");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "time_stamp"), "", "get_time_stamp");
+}
+
+InworldMessageTalk::Viseme::Viseme() :
+		Object{}, code{}, time_stamp{} {
+}
+
+InworldMessageTalk::Viseme::~Viseme() {
+}
+
+StringName InworldMessageTalk::Viseme::get_code() const {
+	return code;
+}
+
+float InworldMessageTalk::Viseme::get_time_stamp() const {
+	return time_stamp;
+}
+
 
 void InworldMessageSpeechToText::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_text"), &InworldMessageSpeechToText::get_text);
@@ -82,22 +116,22 @@ void InworldMessageEmotion::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_behavior"), &InworldMessageEmotion::get_behavior);
 	ClassDB::bind_method(D_METHOD("get_strength"), &InworldMessageEmotion::get_strength);
 
-	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "behavior"), "", "get_behavior");
-	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "strength"), "", "get_strength");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "behavior"), "", "get_behavior");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "strength"), "", "get_strength");
 }
 
 InworldMessageEmotion::InworldMessageEmotion() :
-		InworldMessage{}, behavior{ "Neutral" }, strength{ "Normal" } {
+		InworldMessage{}, behavior{ InworldCharacter::EmotionBehavior::NEUTRAL }, strength{ InworldCharacter::EmotionStrength::NORMAL } {
 }
 
 InworldMessageEmotion::~InworldMessageEmotion() {
 }
 
-StringName InworldMessageEmotion::get_behavior() const {
+InworldCharacter::EmotionBehavior InworldMessageEmotion::get_behavior() const {
 	return behavior;
 }
 
-StringName InworldMessageEmotion::get_strength() const {
+InworldCharacter::EmotionStrength InworldMessageEmotion::get_strength() const {
 	return strength;
 }
 

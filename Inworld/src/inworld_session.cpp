@@ -6,6 +6,7 @@
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
@@ -15,9 +16,21 @@ void InworldSession::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_player"), &InworldSession::get_player);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "player", PROPERTY_HINT_NODE_TYPE, "InworldPlayer"), "set_player", "get_player");
 
-	ClassDB::bind_method(D_METHOD("set_scene", "scene"), &InworldSession::set_scene);
-	ClassDB::bind_method(D_METHOD("get_scene"), &InworldSession::get_scene);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "scene"), "set_scene", "get_scene");
+	ClassDB::bind_method(D_METHOD("set_project_name", "project_name"), &InworldSession::set_project_name);
+	ClassDB::bind_method(D_METHOD("get_project_name"), &InworldSession::get_project_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "project_name"), "set_project_name", "get_project_name");
+
+	ClassDB::bind_method(D_METHOD("set_workspace_name", "workspace_name"), &InworldSession::set_workspace_name);
+	ClassDB::bind_method(D_METHOD("get_workspace_name"), &InworldSession::get_workspace_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "workspace_name"), "set_workspace_name", "get_workspace_name");
+
+	ClassDB::bind_method(D_METHOD("set_scene_type", "scene_type"), &InworldSession::set_scene_type);
+	ClassDB::bind_method(D_METHOD("get_scene_type"), &InworldSession::get_scene_type);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "scene_type", PROPERTY_HINT_ENUM, "Scene,Single-Character"), "set_scene_type", "get_scene_type");
+
+	ClassDB::bind_method(D_METHOD("set_scene_name", "scene_name"), &InworldSession::set_scene_name);
+	ClassDB::bind_method(D_METHOD("get_scene_name"), &InworldSession::get_scene_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "scene_name"), "set_scene_name", "get_scene_name");
 
 	ClassDB::bind_method(D_METHOD("set_auth", "auth"), &InworldSession::set_auth);
 	ClassDB::bind_method(D_METHOD("get_auth"), &InworldSession::get_auth);
@@ -42,10 +55,13 @@ void InworldSession::_bind_methods() {
 	BIND_ENUM_CONSTANT(PAUSED);
 	BIND_ENUM_CONSTANT(DISCONNECTED);
 	BIND_ENUM_CONSTANT(RECONNECTING);
+	
+	BIND_ENUM_CONSTANT(SCENE);
+	BIND_ENUM_CONSTANT(SINGLE_CHARACTER);
 }
 
 InworldSession::InworldSession() :
-		Node{}, player{ nullptr }, scene{}, auth{}, established{ false }, connected{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
+		Node{}, player{ nullptr }, project_name{}, workspace_name{}, scene_type{}, scene_name{}, auth{}, established{ false }, connected{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
 	Inworld::SdkInfo sdk_info{
 		"godot",
 		std::string(((String)Engine::get_singleton()->get_version_info()["string"]).utf8()),
@@ -95,8 +111,12 @@ void InworldSession::start() {
 
 	client_options.ServerUrl = "api-engine.inworld.ai:443";
 
-	client_options.PlayerName = player == nullptr ? "Player" : player->get_name().utf8().get_data();
-	client_options.SceneName = scene.utf8().get_data();
+	client_options.ProjectName = project_name.utf8().get_data();
+	client_options.PlayerName = player == nullptr ? "Player" : player->get_given_name().utf8().get_data();
+
+	std::unordered_map<SceneType, String> scene_type_to_name = {{SceneType::SCENE, "scenes"}, {SceneType::SINGLE_CHARACTER, "characters"}};
+
+	client_options.SceneName = String(String("workspaces/") + workspace_name + String("/") + scene_type_to_name[scene_type] + String("/") + scene_name).utf8().get_data();
 	client_options.Base64 = auth.utf8().get_data();
 
 	client_options.Capabilities.Text = true;
@@ -105,13 +125,15 @@ void InworldSession::start() {
 	client_options.Capabilities.Interruptions = true;
 	client_options.Capabilities.Triggers = true;
 	client_options.Capabilities.EmotionStreaming = true;
+	client_options.Capabilities.PhonemeInfo = true;
 	client_options.Capabilities.LoadSceneInSession = true;
 
 	client.StartClient(
 			client_options, {},
 			[this](const std::vector<Inworld::AgentInfo> &p_agent_infos) {
 				for (const Inworld::AgentInfo &agent_info : p_agent_infos) {
-					agent_info_map[agent_info.BrainName] = agent_info;
+					std::string brain_name = agent_info.BrainName.substr(agent_info.BrainName.rfind("/") + 1, agent_info.BrainName.size());
+					agent_info_map[brain_name] = agent_info;
 
 					const String signal_prefix = String(agent_info.AgentId.c_str());
 
@@ -163,7 +185,7 @@ bool InworldSession::get_established() const {
 	return established;
 }
 
-String InworldSession::get_name(String p_brain) const {
+String InworldSession::get_given_name(String p_brain) const {
 	std::optional<Inworld::AgentInfo> agent = get_agent_from_brain(p_brain);
 	return agent.has_value() ? String(agent.value().GivenName.c_str()) : String{};
 }
@@ -264,12 +286,36 @@ InworldPlayer *InworldSession::get_player() const {
 	return player;
 }
 
-void InworldSession::set_scene(String p_scene) {
-	scene = p_scene;
+void InworldSession::set_project_name(String p_project_name) {
+	project_name = p_project_name;
 }
 
-String InworldSession::get_scene() const {
-	return scene;
+String InworldSession::get_project_name() const {
+	return project_name;
+}
+
+void InworldSession::set_workspace_name(String p_workspace_name) {
+	workspace_name = p_workspace_name;
+}
+
+String InworldSession::get_workspace_name() const {
+	return workspace_name;
+}
+
+void InworldSession::set_scene_type(InworldSession::SceneType p_scene_type) {
+	scene_type = p_scene_type;
+}
+
+InworldSession::SceneType InworldSession::get_scene_type() const {
+	return scene_type;
+}
+
+void InworldSession::set_scene_name(String p_scene_name) {
+	scene_name = p_scene_name;
+}
+
+String InworldSession::get_scene_name() const {
+	return scene_name;
 }
 
 void InworldSession::set_auth(String p_auth) {

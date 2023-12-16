@@ -1,0 +1,74 @@
+[gd_scene load_steps=6 format=3 uid="uid://btph3gxfonssl"]
+
+[ext_resource type="Texture2D" uid="uid://dbn8bvtkf5cjf" path="res://sprites/characters/player/player.png" id="1_02qvj"]
+[ext_resource type="Script" path="res://character/Character.gd" id="1_cc2va"]
+[ext_resource type="PackedScene" uid="uid://icumxvul3o55" path="res://character/emoji.tscn" id="3_iq350"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3v1sr"]
+size = Vector2(16, 16)
+
+[sub_resource type="Theme" id="Theme_84hfc"]
+
+[node name="Mob" type="CharacterBody2D"]
+script = ExtResource("1_cc2va")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_3v1sr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_02qvj")
+
+[node name="Speech" type="Label" parent="."]
+clip_contents = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -32.0
+offset_top = -40.0
+offset_right = 224.0
+offset_bottom = 88.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.25, 0.25)
+theme_override_colors/font_color = Color(0.25098, 0.0588235, 0.0588235, 1)
+theme_override_colors/font_shadow_color = Color(0.752941, 0.945098, 0.945098, 1)
+text = "
+"
+horizontal_alignment = 1
+vertical_alignment = 2
+autowrap_mode = 3
+text_overrun_behavior = 4
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+
+[node name="Emoji" parent="." instance=ExtResource("3_iq350")]
+position = Vector2(-4, -4)
+scale = Vector2(0.75, 0.75)
+
+[node name="Name" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_top = 8.0
+offset_right = 224.0
+offset_bottom = 32.0
+grow_horizontal = 2
+scale = Vector2(0.25, 0.25)
+theme = SubResource("Theme_84hfc")
+theme_override_colors/font_color = Color(0.25098, 0.0588235, 0.0588235, 1)
+theme_override_colors/font_shadow_color = Color(0.752941, 0.945098, 0.945098, 1)
+text = "
+"
+horizontal_alignment = 1
+
+[node name="InworldCharacter" type="InworldCharacter" parent="."]
+
+[connection signal="finished" from="AudioStreamPlayer2D" to="." method="_on_audio_stream_player_2d_finished"]
+[connection signal="conversing_end" from="InworldCharacter" to="." method="_on_inworld_character_conversing_end"]
+[connection signal="conversing_start" from="InworldCharacter" to="." method="_on_inworld_character_conversing_start"]
+[connection signal="interrupted" from="InworldCharacter" to="." method="_on_inworld_character_interrupted"]
+[connection signal="message_emotion" from="InworldCharacter" to="." method="_on_inworld_character_message_emotion"]
+[connection signal="message_talk" from="InworldCharacter" to="." method="_on_inworld_character_message_talk"]

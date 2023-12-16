@@ -1,0 +1,8 @@
+Thank you for downloading pixymoji! 😃
+
+pixymoji is a set of open-source pixel emojis for games, websites, and other projects.
+These emojis are licensed under CC0, which means you can use them however you want - credit is optional but appreciated.
+
+If you want to suggest an emoji, be sure to open an issue on GitHub or find our other projects at spicygame.itch.io. Enjoy!
+
+spicygame.itch.io/pixymoji

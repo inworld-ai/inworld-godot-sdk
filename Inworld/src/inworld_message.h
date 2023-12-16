@@ -1,7 +1,10 @@
 #ifndef INWORLD_MESSAGE_H
 #define INWORLD_MESSAGE_H
 
+#include "inworld_character.h"
+
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
 
 namespace godot {
 
@@ -25,6 +28,24 @@ public:
 class InworldMessageTalk : public InworldMessage {
 	GDCLASS(InworldMessageTalk, InworldMessage)
 
+public:
+	class Viseme : public Object {
+		GDCLASS(Viseme, Object)
+
+	protected:
+		static void _bind_methods();
+
+	public:
+		Viseme();
+		~Viseme();
+
+		StringName code;
+		float time_stamp;
+
+		StringName get_code() const;
+		float get_time_stamp() const;
+	};
+
 protected:
 	static void _bind_methods();
 
@@ -34,9 +55,11 @@ public:
 
 	String text;
 	PackedByteArray chunk;
+	TypedArray<Viseme> visemes;
 
 	String get_text() const;
 	PackedByteArray get_chunk() const;
+	TypedArray<Viseme> get_visemes() const;
 
 	bool get_ready() const;
 };
@@ -68,11 +91,11 @@ public:
 	InworldMessageEmotion();
 	~InworldMessageEmotion();
 
-	StringName behavior;
-	StringName strength;
+	InworldCharacter::EmotionBehavior behavior;
+	InworldCharacter::EmotionStrength strength;
 
-	StringName get_behavior() const;
-	StringName get_strength() const;
+	InworldCharacter::EmotionBehavior get_behavior() const;
+	InworldCharacter::EmotionStrength get_strength() const;
 };
 
 class InworldMessageTrigger : public InworldMessage {

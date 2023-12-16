@@ -5,6 +5,7 @@
 #include "Types.h"
 
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
@@ -29,7 +30,7 @@ void InworldEvent::_bind_methods() {
 }
 
 InworldEvent::InworldEvent() :
-		RefCounted(), routing(), packet_id() {
+		RefCounted{}, routing{}, packet_id{} {
 }
 
 InworldEvent::~InworldEvent() {
@@ -104,35 +105,69 @@ PackedByteArray InworldEventData::get_chunk() const {
 }
 
 void InworldEventDataAudio::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_phonemes"), &InworldEventDataAudio::get_phonemes);
+
+	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "phonemes"), "", "get_phonemes");
+}
+
+TypedArray<InworldEventDataAudio::Phoneme> InworldEventDataAudio::get_phonemes() const {
+	return phonemes;
 }
 
 InworldEventDataAudio::InworldEventDataAudio() :
-		InworldEventData{} {
+		InworldEventData{}, phonemes{} {
 }
 
 InworldEventDataAudio::~InworldEventDataAudio() {
+	for(uint32_t i = 0; i < phonemes.size(); ++i) {
+		InworldEventDataAudio::Phoneme *phoneme = Object::cast_to<InworldEventDataAudio::Phoneme>(&*phonemes[i]);
+		memdelete(phoneme);
+	}
+}
+
+void InworldEventDataAudio::Phoneme::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_code"), &InworldEventDataAudio::Phoneme::get_code);
+	ClassDB::bind_method(D_METHOD("get_time_stamp"), &InworldEventDataAudio::Phoneme::get_time_stamp);
+
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "code"), "", "get_code");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "time_stamp"), "", "get_time_stamp");
+}
+
+InworldEventDataAudio::Phoneme::Phoneme() :
+		Object{}, code{}, time_stamp{} {
+}
+
+InworldEventDataAudio::Phoneme::~Phoneme() {
+}
+
+StringName InworldEventDataAudio::Phoneme::get_code() const {
+	return code;
+}
+
+float InworldEventDataAudio::Phoneme::get_time_stamp() const {
+	return time_stamp;
 }
 
 void InworldEventEmotion::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_behavior"), &InworldEventEmotion::get_behavior);
 	ClassDB::bind_method(D_METHOD("get_strength"), &InworldEventEmotion::get_strength);
 
-	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "behavior"), "", "get_behavior");
-	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "strength"), "", "get_strength");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "behavior"), "", "get_behavior");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "strength"), "", "get_strength");
 }
 
 InworldEventEmotion::InworldEventEmotion() :
-		InworldEvent{}, behavior{ "Neutral" }, strength{ "Normal" } {
+		InworldEvent{}, behavior{ InworldCharacter::EmotionBehavior::NEUTRAL }, strength{ InworldCharacter::EmotionStrength::NORMAL } {
 }
 
 InworldEventEmotion::~InworldEventEmotion() {
 }
 
-StringName InworldEventEmotion::get_behavior() const {
+InworldCharacter::EmotionBehavior InworldEventEmotion::get_behavior() const {
 	return behavior;
 }
 
-StringName InworldEventEmotion::get_strength() const {
+InworldCharacter::EmotionStrength InworldEventEmotion::get_strength() const {
 	return strength;
 }
 

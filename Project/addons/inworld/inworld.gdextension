@@ -11,3 +11,9 @@ windows.debug.x86_32 = "res://addons/inworld/bin/libinworld.windows.template_deb
 windows.release.x86_32 = "res://addons/inworld/bin/libinworld.windows.template_release.x86_32.dll"
 windows.debug.x86_64 = "res://addons/inworld/bin/libinworld.windows.template_debug.x86_64.dll"
 windows.release.x86_64 = "res://addons/inworld/bin/libinworld.windows.template_release.x86_64.dll"
+
+[icons]
+
+InworldCharacter = "res://addons/inworld/icons/inworld.png"
+InworldPlayer = "res://addons/inworld/icons/inworld.png"
+InworldSession = "res://addons/inworld/icons/inworld.png"

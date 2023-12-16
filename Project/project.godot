@@ -12,19 +12,18 @@ config_version=5
 
 config/name="Inworld Sample Project"
 config/description="Sample project for Inworld AI"
-run/main_scene="res://inworld_scene.tscn"
+run/main_scene="res://game.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://icon.png"
 
 [audio]
 
+buses/default_bus_layout=""
 driver/enable_input=true
 
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
-window/size/mode=3
+window/size/resizable=false
 
 [input]
 
@@ -51,7 +50,7 @@ move_down={
 
 [native_extensions]
 
-paths=["res://inworld.gdextension"]
+paths=["res://addons/inworld/inworld.gdextension"]
 
 [rendering]
 

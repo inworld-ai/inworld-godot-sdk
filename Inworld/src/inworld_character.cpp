@@ -3,6 +3,9 @@
 #include "inworld_event.h"
 #include "inworld_message.h"
 #include "inworld_session.h"
+#include "inworld_talk_queue.h"
+
+#include "Utils/Utils.h"
 
 #include <godot_cpp/core/class_db.hpp>
 
@@ -13,7 +16,8 @@ void InworldCharacter::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_brain"), &InworldCharacter::get_brain);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "brain"), "set_brain", "get_brain");
 
-	ClassDB::bind_method(D_METHOD("get_name"), &InworldCharacter::get_name);
+	ClassDB::bind_method(D_METHOD("get_given_name"), &InworldCharacter::get_given_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "given_name"), "", "get_given_name");
 
 	ClassDB::bind_method(D_METHOD("set_session", "session"), &InworldCharacter::set_session);
 	ClassDB::bind_method(D_METHOD("get_session"), &InworldCharacter::get_session);
@@ -45,7 +49,34 @@ void InworldCharacter::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("message_trigger", PropertyInfo(Variant::OBJECT, "trigger")));
 	ADD_SIGNAL(MethodInfo("message_control", PropertyInfo(Variant::OBJECT, "control")));
 
+	ADD_SIGNAL(MethodInfo("conversing_start", PropertyInfo(Variant::OBJECT, "player")));
+	ADD_SIGNAL(MethodInfo("conversing_end", PropertyInfo(Variant::OBJECT, "player")));
+
 	ADD_SIGNAL(MethodInfo("interrupted"));
+
+	BIND_ENUM_CONSTANT(AFFECTION);
+	BIND_ENUM_CONSTANT(ANGER);
+	BIND_ENUM_CONSTANT(BELLIGERENCE);
+	BIND_ENUM_CONSTANT(CONTEMPT);
+	BIND_ENUM_CONSTANT(CRITICISM);
+	BIND_ENUM_CONSTANT(DEFENSIVENESS);
+	BIND_ENUM_CONSTANT(DISGUST);
+	BIND_ENUM_CONSTANT(DOMINEERING);
+	BIND_ENUM_CONSTANT(HUMOR);
+	BIND_ENUM_CONSTANT(INTEREST);
+	BIND_ENUM_CONSTANT(JOY);
+	BIND_ENUM_CONSTANT(NEUTRAL);
+	BIND_ENUM_CONSTANT(SADNESS);
+	BIND_ENUM_CONSTANT(STONEWALLING);
+	BIND_ENUM_CONSTANT(SURPRISE);
+	BIND_ENUM_CONSTANT(TENSE);
+	BIND_ENUM_CONSTANT(TENSION);
+	BIND_ENUM_CONSTANT(VALIDATION);
+	BIND_ENUM_CONSTANT(WHINING);
+	
+	BIND_ENUM_CONSTANT(WEAK);
+	BIND_ENUM_CONSTANT(NORMAL);
+	BIND_ENUM_CONSTANT(STRONG);
 }
 
 InworldCharacter::InworldCharacter() :
@@ -71,11 +102,11 @@ String InworldCharacter::get_brain() const {
 	return brain;
 }
 
-String InworldCharacter::get_name() const {
+String InworldCharacter::get_given_name() const {
 	if (session == nullptr || !session->get_established()) {
 		return {};
 	}
-	return session->get_name(brain);
+	return session->get_given_name(brain);
 }
 
 void InworldCharacter::set_session(InworldSession *p_session) {
@@ -89,7 +120,7 @@ InworldSession *InworldCharacter::get_session() const {
 }
 
 void InworldCharacter::send_text(String p_text) {
-	if (session == nullptr || !session->get_connected()) {
+	if (session == nullptr || !session->get_established()) {
 		return;
 	}
 	interrupt();
@@ -97,7 +128,7 @@ void InworldCharacter::send_text(String p_text) {
 }
 
 void InworldCharacter::send_trigger(String p_name, Dictionary p_params) {
-	if (session == nullptr || !session->get_connected()) {
+	if (session == nullptr || !session->get_established()) {
 		return;
 	}
 	interrupt();
@@ -106,7 +137,7 @@ void InworldCharacter::send_trigger(String p_name, Dictionary p_params) {
 
 void InworldCharacter::start_audio_session() {
 	wants_audio_session = true;
-	if (session == nullptr || !session->get_connected()) {
+	if (session == nullptr || !session->get_established()) {
 		return;
 	}
 	session->start_audio_session(brain);
@@ -114,14 +145,14 @@ void InworldCharacter::start_audio_session() {
 
 void InworldCharacter::stop_audio_session() {
 	wants_audio_session = false;
-	if (session == nullptr || !session->get_connected()) {
+	if (session == nullptr || !session->get_established()) {
 		return;
 	}
 	session->stop_audio_session(brain);
 }
 
 void InworldCharacter::send_audio(PackedByteArray p_data) {
-	if (session == nullptr || !session->get_connected()) {
+	if (session == nullptr || !session->get_established()) {
 		return;
 	}
 	session->send_audio(brain, p_data);
@@ -198,7 +229,19 @@ void InworldCharacter::on_event_audio(Ref<InworldEventDataAudio> p_event_audio) 
 		return;
 	}
 
-	talk_queue->update_chunk(p_event_audio->get_interaction_id(), p_event_audio->get_utterance_id(), p_event_audio->chunk);
+	TypedArray<InworldMessageTalk::Viseme> visemes;
+	for(uint32_t i = 0; i < p_event_audio->phonemes.size(); ++i) {
+		InworldEventDataAudio::Phoneme *phoneme = Object::cast_to<InworldEventDataAudio::Phoneme>(&*p_event_audio->phonemes[i]);
+		const String viseme_from_phoneme = String(Inworld::Utils::PhonemeToViseme(String(phoneme->code).utf8().get_data()).c_str());
+		if(!viseme_from_phoneme.is_empty()) {
+			InworldMessageTalk::Viseme *viseme = memnew(InworldMessageTalk::Viseme);
+			viseme->code = StringName(viseme_from_phoneme);
+			viseme->time_stamp = phoneme->time_stamp;
+			visemes.push_back(Variant(viseme));
+		}
+	}
+
+	talk_queue->update_audio(p_event_audio->get_interaction_id(), p_event_audio->get_utterance_id(), p_event_audio->chunk, visemes);
 }
 
 void InworldCharacter::on_event_emotion(Ref<InworldEventEmotion> p_event_emotion) {

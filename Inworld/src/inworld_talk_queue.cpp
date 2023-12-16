@@ -34,8 +34,9 @@ void InworldTalkQueue::update_text(String p_interaction_id, String p_utterance_i
 	_check_next_ready();
 }
 
-void InworldTalkQueue::update_chunk(String p_interaction_id, String p_utterance_id, PackedByteArray p_chunk) {
+void InworldTalkQueue::update_audio(String p_interaction_id, String p_utterance_id, PackedByteArray p_chunk, TypedArray<InworldMessageTalk::Viseme> p_visemes) {
 	_find_or_create(p_interaction_id, p_utterance_id)->chunk = p_chunk;
+	_find_or_create(p_interaction_id, p_utterance_id)->visemes = p_visemes;
 	_check_next_ready();
 }
 

@@ -18,13 +18,13 @@ InworldPacketHandler::~InworldPacketHandler() {
 void translate_inworld_actor(const Inworld::Actor &p_original, InworldEventActor &p_new) {
 	switch (p_original._Type) {
 		case InworldPakets::Actor_Type::Actor_Type_PLAYER:
-			p_new.type = "Player";
+			p_new.type = StringName("Player");
 			break;
 		case InworldPakets::Actor_Type::Actor_Type_AGENT:
-			p_new.type = "Agent";
+			p_new.type = StringName("Agent");
 			break;
 		default:
-			p_new.type = "Unknown";
+			p_new.type = StringName("Unknown");
 			break;
 	}
 	p_new.name = String(p_original._Name.c_str());
@@ -67,6 +67,12 @@ void translate_event<Inworld::DataEvent, InworldEventData>(const Inworld::DataEv
 template <>
 void translate_event<Inworld::AudioDataEvent, InworldEventDataAudio>(const Inworld::AudioDataEvent &p_original, InworldEventDataAudio &p_new) {
 	translate_event<Inworld::DataEvent, InworldEventData>(p_original, p_new);
+	for(const auto& phoneme_info : p_original.GetPhonemeInfos()) {
+		InworldEventDataAudio::Phoneme *phoneme = memnew(InworldEventDataAudio::Phoneme);
+		phoneme->code = StringName(phoneme_info.Code.c_str());
+		phoneme->time_stamp = phoneme_info.Timestamp;
+		p_new.phonemes.push_back(Variant(phoneme));
+	}
 }
 
 template <>
@@ -74,73 +80,79 @@ void translate_event<Inworld::EmotionEvent, InworldEventEmotion>(const Inworld::
 	translate_inworld_packet(p_original, p_new);
 	switch (p_original.GetEmotionalBehavior()) {
 		case ai::inworld::packets::EmotionEvent_SpaffCode_AFFECTION:
-			p_new.behavior = StringName("Affection");
+			p_new.behavior = InworldCharacter::EmotionBehavior::AFFECTION;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_ANGER:
-			p_new.behavior = StringName("Anger");
+			p_new.behavior = InworldCharacter::EmotionBehavior::ANGER;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_BELLIGERENCE:
-			p_new.behavior = StringName("Belligerence");
+			p_new.behavior = InworldCharacter::EmotionBehavior::BELLIGERENCE;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_CONTEMPT:
-			p_new.behavior = StringName("Contempt");
+			p_new.behavior = InworldCharacter::EmotionBehavior::CONTEMPT;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_CRITICISM:
-			p_new.behavior = StringName("Criticism");
+			p_new.behavior = InworldCharacter::EmotionBehavior::CRITICISM;
+			break;
+		case ai::inworld::packets::EmotionEvent_SpaffCode_DEFENSIVENESS:
+			p_new.behavior = InworldCharacter::EmotionBehavior::DEFENSIVENESS;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_DISGUST:
-			p_new.behavior = StringName("Disgust");
+			p_new.behavior = InworldCharacter::EmotionBehavior::DISGUST;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_DOMINEERING:
-			p_new.behavior = StringName("Domineering");
+			p_new.behavior = InworldCharacter::EmotionBehavior::DOMINEERING;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_HUMOR:
-			p_new.behavior = StringName("Humor");
+			p_new.behavior = InworldCharacter::EmotionBehavior::HUMOR;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_INTEREST:
-			p_new.behavior = StringName("Interest");
+			p_new.behavior = InworldCharacter::EmotionBehavior::INTEREST;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_JOY:
-			p_new.behavior = StringName("Joy");
+			p_new.behavior = InworldCharacter::EmotionBehavior::JOY;
+			break;
+		case ai::inworld::packets::EmotionEvent_SpaffCode_NEUTRAL:
+			p_new.behavior = InworldCharacter::EmotionBehavior::NEUTRAL;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_SADNESS:
-			p_new.behavior = StringName("Sadness");
+			p_new.behavior = InworldCharacter::EmotionBehavior::SADNESS;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_STONEWALLING:
-			p_new.behavior = StringName("Stonewalling");
+			p_new.behavior = InworldCharacter::EmotionBehavior::STONEWALLING;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_SURPRISE:
-			p_new.behavior = StringName("Surprise");
+			p_new.behavior = InworldCharacter::EmotionBehavior::SURPRISE;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_TENSE_HUMOR:
-			p_new.behavior = StringName("Tense");
+			p_new.behavior = InworldCharacter::EmotionBehavior::TENSE;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_TENSION:
-			p_new.behavior = StringName("Tension");
+			p_new.behavior = InworldCharacter::EmotionBehavior::TENSION;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_VALIDATION:
-			p_new.behavior = StringName("Validation");
+			p_new.behavior = InworldCharacter::EmotionBehavior::VALIDATION;
 			break;
 		case ai::inworld::packets::EmotionEvent_SpaffCode_WHINING:
-			p_new.behavior = StringName("Whining");
+			p_new.behavior = InworldCharacter::EmotionBehavior::WHINING;
 			break;
 		default:
-			p_new.behavior = StringName("Neutral");
+			p_new.behavior = InworldCharacter::EmotionBehavior::NEUTRAL;
 			break;
 	}
 
 	switch (p_original.GetStrength()) {
 		case ai::inworld::packets::EmotionEvent_Strength_WEAK:
-			p_new.strength = StringName("Weak");
+			p_new.strength = InworldCharacter::EmotionStrength::WEAK;
 			break;
 		case ai::inworld::packets::EmotionEvent_Strength_NORMAL:
-			p_new.strength = StringName("Normal");
+			p_new.strength = InworldCharacter::EmotionStrength::NORMAL;
 			break;
 		case ai::inworld::packets::EmotionEvent_Strength_STRONG:
-			p_new.strength = StringName("Strong");
+			p_new.strength = InworldCharacter::EmotionStrength::STRONG;
 			break;
 		default:
-			p_new.strength = StringName("Unspecified");
+			p_new.strength = InworldCharacter::EmotionStrength::NORMAL;
 			break;
 	}
 }
