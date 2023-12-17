@@ -9,7 +9,7 @@ size = Vector2(16, 16)
 
 [sub_resource type="Theme" id="Theme_84hfc"]
 
-[node name="Mob" type="CharacterBody2D"]
+[node name="Character" type="CharacterBody2D"]
 script = ExtResource("1_cc2va")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -67,8 +67,8 @@ horizontal_alignment = 1
 [node name="InworldCharacter" type="InworldCharacter" parent="."]
 
 [connection signal="finished" from="AudioStreamPlayer2D" to="." method="_on_audio_stream_player_2d_finished"]
-[connection signal="conversing_end" from="InworldCharacter" to="." method="_on_inworld_character_conversing_end"]
 [connection signal="conversing_start" from="InworldCharacter" to="." method="_on_inworld_character_conversing_start"]
+[connection signal="conversing_stop" from="InworldCharacter" to="." method="_on_inworld_character_conversing_stop"]
 [connection signal="interrupted" from="InworldCharacter" to="." method="_on_inworld_character_interrupted"]
 [connection signal="message_emotion" from="InworldCharacter" to="." method="_on_inworld_character_message_emotion"]
 [connection signal="message_talk" from="InworldCharacter" to="." method="_on_inworld_character_message_talk"]

@@ -178,7 +178,7 @@ InworldSession::ConnectionState InworldSession::get_connection_state() const {
 }
 
 bool InworldSession::get_connected() const {
-	return get_connection_state() == InworldSession::ConnectionState::CONNECTED && get_established();
+	return get_connection_state() == InworldSession::ConnectionState::CONNECTED;
 }
 
 bool InworldSession::get_established() const {
