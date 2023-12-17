@@ -50,7 +50,7 @@ void InworldCharacter::_bind_methods() {
 	ADD_SIGNAL(MethodInfo("message_control", PropertyInfo(Variant::OBJECT, "control")));
 
 	ADD_SIGNAL(MethodInfo("conversing_start", PropertyInfo(Variant::OBJECT, "player")));
-	ADD_SIGNAL(MethodInfo("conversing_end", PropertyInfo(Variant::OBJECT, "player")));
+	ADD_SIGNAL(MethodInfo("conversing_stop", PropertyInfo(Variant::OBJECT, "player")));
 
 	ADD_SIGNAL(MethodInfo("interrupted"));
 

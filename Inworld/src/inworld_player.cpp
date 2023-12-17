@@ -23,7 +23,7 @@ void InworldPlayer::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "talking"), "set_talking", "get_talking");
 
 	ADD_SIGNAL(MethodInfo("conversing_start", PropertyInfo(Variant::OBJECT, "character")));
-	ADD_SIGNAL(MethodInfo("conversing_end", PropertyInfo(Variant::OBJECT, "character")));
+	ADD_SIGNAL(MethodInfo("conversing_stop", PropertyInfo(Variant::OBJECT, "character")));
 }
 
 InworldPlayer::InworldPlayer() :
@@ -63,8 +63,8 @@ void InworldPlayer::set_target_character(InworldCharacter *p_target_character) {
 		_stop_talk_to_target();
 	}
 	if (target_character) {
-		emit_signal("conversing_end", target_character);
-		target_character->emit_signal("conversing_end", this);
+		emit_signal("conversing_stop", target_character);
+		target_character->emit_signal("conversing_stop", this);
 	}
 	target_character = p_target_character;
 	if (target_character) {

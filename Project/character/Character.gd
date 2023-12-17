@@ -56,6 +56,6 @@ func _on_inworld_character_conversing_start(player : InworldPlayer):
 	$Sprite2D.texture = selected_texture
 
 
-func _on_inworld_character_conversing_end(_player : InworldPlayer):
+func _on_inworld_character_conversing_stop(_player : InworldPlayer):
 	conversing_player = null
 	$Sprite2D.texture = unselected_texture

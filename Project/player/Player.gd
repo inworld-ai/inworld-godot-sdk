@@ -51,7 +51,7 @@ func _on_inworld_session_established(_established : bool):
 func _on_inworld_player_conversing_start(character : InworldCharacter):
 	character.message_stt.connect(_on_inworld_player_target_message_stt)
 
-func _on_inworld_player_conversing_end(character : InworldCharacter):
+func _on_inworld_player_conversing_stop(character : InworldCharacter):
 	character.message_stt.disconnect(_on_inworld_player_target_message_stt)
 
 func _on_inworld_player_target_message_stt(stt : InworldMessageSpeechToText):

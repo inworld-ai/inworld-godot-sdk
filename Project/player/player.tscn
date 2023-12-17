@@ -95,5 +95,5 @@ horizontal_alignment = 1
 [node name="InworldPlayer" type="InworldPlayer" parent="."]
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
-[connection signal="conversing_end" from="InworldPlayer" to="." method="_on_inworld_player_conversing_end"]
 [connection signal="conversing_start" from="InworldPlayer" to="." method="_on_inworld_player_conversing_start"]
+[connection signal="conversing_stop" from="InworldPlayer" to="." method="_on_inworld_player_conversing_stop"]
