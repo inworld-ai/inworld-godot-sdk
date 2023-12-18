@@ -119,7 +119,7 @@ InworldEventDataAudio::InworldEventDataAudio() :
 }
 
 InworldEventDataAudio::~InworldEventDataAudio() {
-	for(uint32_t i = 0; i < phonemes.size(); ++i) {
+	for (uint32_t i = 0; i < phonemes.size(); ++i) {
 		InworldEventDataAudio::Phoneme *phoneme = Object::cast_to<InworldEventDataAudio::Phoneme>(&*phonemes[i]);
 		memdelete(phoneme);
 	}

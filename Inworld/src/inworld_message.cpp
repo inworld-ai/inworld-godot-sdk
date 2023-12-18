@@ -43,7 +43,7 @@ InworldMessageTalk::InworldMessageTalk() :
 }
 
 InworldMessageTalk::~InworldMessageTalk() {
-	for(uint32_t i = 0; i < visemes.size(); ++i) {
+	for (uint32_t i = 0; i < visemes.size(); ++i) {
 		InworldMessageTalk::Viseme *viseme = Object::cast_to<InworldMessageTalk::Viseme>(&*visemes[i]);
 		memdelete(viseme);
 	}
@@ -87,7 +87,6 @@ StringName InworldMessageTalk::Viseme::get_code() const {
 float InworldMessageTalk::Viseme::get_time_stamp() const {
 	return time_stamp;
 }
-
 
 void InworldMessageSpeechToText::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_text"), &InworldMessageSpeechToText::get_text);

@@ -73,7 +73,7 @@ void InworldCharacter::_bind_methods() {
 	BIND_ENUM_CONSTANT(TENSION);
 	BIND_ENUM_CONSTANT(VALIDATION);
 	BIND_ENUM_CONSTANT(WHINING);
-	
+
 	BIND_ENUM_CONSTANT(WEAK);
 	BIND_ENUM_CONSTANT(NORMAL);
 	BIND_ENUM_CONSTANT(STRONG);
@@ -230,10 +230,10 @@ void InworldCharacter::on_event_audio(Ref<InworldEventDataAudio> p_event_audio) 
 	}
 
 	TypedArray<InworldMessageTalk::Viseme> visemes;
-	for(uint32_t i = 0; i < p_event_audio->phonemes.size(); ++i) {
+	for (uint32_t i = 0; i < p_event_audio->phonemes.size(); ++i) {
 		InworldEventDataAudio::Phoneme *phoneme = Object::cast_to<InworldEventDataAudio::Phoneme>(&*p_event_audio->phonemes[i]);
 		const String viseme_from_phoneme = String(Inworld::Utils::PhonemeToViseme(String(phoneme->code).utf8().get_data()).c_str());
-		if(!viseme_from_phoneme.is_empty()) {
+		if (!viseme_from_phoneme.is_empty()) {
 			InworldMessageTalk::Viseme *viseme = memnew(InworldMessageTalk::Viseme);
 			viseme->code = StringName(viseme_from_phoneme);
 			viseme->time_stamp = phoneme->time_stamp;
