@@ -51,7 +51,7 @@ private:
 
 public:
 	InworldSession();
-	~InworldSession();
+	virtual ~InworldSession();
 
 	virtual void _process(double_t delta) override;
 

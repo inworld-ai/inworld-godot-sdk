@@ -17,7 +17,7 @@ protected:
 
 public:
 	InworldMicrophone();
-	~InworldMicrophone();
+	virtual ~InworldMicrophone();
 
 	void set_hot(bool p_hot);
 	bool get_hot() const;

@@ -15,7 +15,7 @@ protected:
 
 public:
 	InworldPacketHandler();
-	~InworldPacketHandler();
+	virtual ~InworldPacketHandler();
 
 public:
 	virtual void Visit(const Inworld::TextEvent &Event) override;

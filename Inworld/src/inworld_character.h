@@ -61,7 +61,7 @@ private:
 
 public:
 	InworldCharacter();
-	~InworldCharacter();
+	virtual ~InworldCharacter();
 
 	void set_brain(String p_brain);
 	String get_brain() const;

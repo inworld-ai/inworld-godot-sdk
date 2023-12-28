@@ -28,7 +28,7 @@ private:
 
 public:
 	InworldPlayer();
-	~InworldPlayer();
+	virtual ~InworldPlayer();
 
 	virtual void _process(double_t delta) override;
 

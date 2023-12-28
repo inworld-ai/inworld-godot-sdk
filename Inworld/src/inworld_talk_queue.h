@@ -22,7 +22,7 @@ private:
 
 public:
 	InworldTalkQueue();
-	~InworldTalkQueue();
+	virtual ~InworldTalkQueue();
 
 public:
 	Vector<Ref<InworldMessageTalk>> get_talks();
