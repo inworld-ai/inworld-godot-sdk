@@ -34,7 +34,7 @@ protected:
 
 public:
 	InworldEvent();
-	~InworldEvent();
+	virtual ~InworldEvent();
 
 	InworldEventRouting routing;
 	InworldEventPacketId packet_id;
@@ -58,7 +58,7 @@ protected:
 
 public:
 	InworldEventText();
-	~InworldEventText();
+	virtual ~InworldEventText();
 
 	String text;
 	bool complete;
@@ -75,7 +75,7 @@ protected:
 
 public:
 	InworldEventData();
-	~InworldEventData();
+	virtual ~InworldEventData();
 
 	PackedByteArray chunk;
 
@@ -94,7 +94,7 @@ public:
 
 	public:
 		Phoneme();
-		~Phoneme();
+		virtual ~Phoneme();
 
 		StringName code;
 		float time_stamp;
@@ -123,7 +123,7 @@ protected:
 
 public:
 	InworldEventEmotion();
-	~InworldEventEmotion();
+	virtual ~InworldEventEmotion();
 
 	InworldCharacter::EmotionBehavior behavior;
 	InworldCharacter::EmotionStrength strength;
@@ -140,7 +140,7 @@ protected:
 
 public:
 	InworldEventTrigger();
-	~InworldEventTrigger();
+	virtual ~InworldEventTrigger();
 
 	String name;
 	Dictionary params;
@@ -157,7 +157,7 @@ protected:
 
 public:
 	InworldEventControl();
-	~InworldEventControl();
+	virtual ~InworldEventControl();
 
 	StringName type;
 

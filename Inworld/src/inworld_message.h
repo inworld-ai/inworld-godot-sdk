@@ -16,7 +16,7 @@ protected:
 
 public:
 	InworldMessage();
-	~InworldMessage();
+	virtual ~InworldMessage();
 
 	String interaction_id;
 	String utterance_id;
@@ -37,7 +37,7 @@ public:
 
 	public:
 		Viseme();
-		~Viseme();
+		virtual ~Viseme();
 
 		StringName code;
 		float time_stamp;
@@ -51,7 +51,7 @@ protected:
 
 public:
 	InworldMessageTalk();
-	~InworldMessageTalk();
+	virtual ~InworldMessageTalk();
 
 	String text;
 	PackedByteArray chunk;
@@ -72,7 +72,7 @@ protected:
 
 public:
 	InworldMessageSpeechToText();
-	~InworldMessageSpeechToText();
+	virtual ~InworldMessageSpeechToText();
 
 	String text;
 	bool complete;
@@ -89,7 +89,7 @@ protected:
 
 public:
 	InworldMessageEmotion();
-	~InworldMessageEmotion();
+	virtual ~InworldMessageEmotion();
 
 	InworldCharacter::EmotionBehavior behavior;
 	InworldCharacter::EmotionStrength strength;
@@ -106,7 +106,7 @@ protected:
 
 public:
 	InworldMessageTrigger();
-	~InworldMessageTrigger();
+	virtual ~InworldMessageTrigger();
 
 	String name;
 	Dictionary params;
@@ -123,7 +123,7 @@ protected:
 
 public:
 	InworldMessageControl();
-	~InworldMessageControl();
+	virtual ~InworldMessageControl();
 
 	StringName type;
 

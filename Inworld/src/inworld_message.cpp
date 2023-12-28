@@ -13,7 +13,7 @@ void InworldMessage::_bind_methods() {
 }
 
 InworldMessage::InworldMessage() :
-		RefCounted(), interaction_id(), utterance_id() {
+		RefCounted{}, interaction_id{}, utterance_id{} {
 }
 
 InworldMessage::~InworldMessage() {
