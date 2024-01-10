@@ -31,7 +31,8 @@ func _on_inworld_character_message_talk(talk : InworldMessageTalk):
 	var audio_wav = AudioStreamWAV.new()
 	audio_wav.data = talk.chunk;
 	audio_wav.format = AudioStreamWAV.FORMAT_16_BITS;
-	audio_wav.mix_rate = 22000;
+	# Inworld sends audio data at 22.05k sample rate
+	audio_wav.mix_rate = 22050;
 		
 	$AudioStreamPlayer2D.stream = audio_wav;
 	$AudioStreamPlayer2D.play();
