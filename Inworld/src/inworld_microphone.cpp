@@ -9,8 +9,12 @@
 using namespace godot;
 
 void _on_recv_audio(ma_device *p_device, void *p_output, const void *p_input, ma_uint32 p_frame_count) {
-	InworldMicrophone::AudioBuffer *audio_buffer = (InworldMicrophone::AudioBuffer *)p_device->pUserData;
-	audio_buffer->write((uint8_t *)p_input, (uint32_t)p_frame_count * 2);
+	InworldMicrophone *microphone = (InworldMicrophone *)p_device->pUserData;
+	_on_recv_write(microphone, (uint8_t *)p_input, (uint32_t)p_frame_count * 2);
+}
+
+void ::_on_recv_write(InworldMicrophone *microphone, uint8_t* p_input, uint32_t size) {
+	microphone->write(p_input, size);
 }
 
 void InworldMicrophone::_bind_methods() {
@@ -20,7 +24,7 @@ void InworldMicrophone::_bind_methods() {
 }
 
 InworldMicrophone::InworldMicrophone() :
-		Object{}, capture_device{ nullptr } {
+		Object{}, buffer{}, capture_device{ nullptr } {
 	capture_device = new ma_device;
 	ma_device_config device_config;
 	device_config = ma_device_config_init(ma_device_type_capture);
@@ -28,7 +32,7 @@ InworldMicrophone::InworldMicrophone() :
 	device_config.capture.channels = 1;
 	device_config.sampleRate = 16000;
 	device_config.dataCallback = _on_recv_audio;
-	device_config.pUserData = &audio_buffer;
+	device_config.pUserData = this;
 
 	if (ma_device_init(NULL, &device_config, capture_device) != MA_SUCCESS) {
 		UtilityFunctions::push_warning(String("Failed to init audio capture device!"), __FUNCTION__, __FILE__, __LINE__);
@@ -55,29 +59,19 @@ bool InworldMicrophone::get_hot() const {
 	return (bool)ma_device_is_started(capture_device);
 }
 
-uint32_t InworldMicrophone::AudioBuffer::size() const {
-	return buffer.size();
-}
+bool InworldMicrophone::try_read(uint8_t *p_out, uint32_t p_size) {
+	if (buffer.size() >= p_size) {
+		memcpy(p_out, buffer.ptrw(), p_size);
 
-#ifndef min
-#define min(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-
-void InworldMicrophone::AudioBuffer::read(uint8_t *p_out, uint32_t p_size) {
-	if (mutex.try_lock()) {
-		uint32_t to_read = min(buffer.size(), p_size);
-		memcpy(p_out, buffer.ptrw(), to_read);
-
-		memcpy(buffer.ptrw(), buffer.ptrw() + to_read, (buffer.size() - to_read));
-		buffer.resize(buffer.size() - to_read);
-		mutex.unlock();
+		memcpy(buffer.ptrw(), buffer.ptrw() + p_size, (buffer.size() - p_size));
+		buffer.resize(buffer.size() - p_size);
+		return true;
 	}
+	return false;
 }
 
-void InworldMicrophone::AudioBuffer::write(uint8_t *p_in, uint32_t p_size) {
-	mutex.lock();
+void InworldMicrophone::write(uint8_t *p_in, uint32_t p_size) {
 	uint32_t prev_size = buffer.size();
 	buffer.resize(buffer.size() + p_size);
 	memcpy(buffer.ptrw() + prev_size, p_in, p_size);
-	mutex.unlock();
 }

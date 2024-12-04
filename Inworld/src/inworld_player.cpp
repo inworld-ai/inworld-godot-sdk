@@ -42,10 +42,9 @@ void InworldPlayer::_process(double_t delta) {
 	Node::_process(delta);
 
 	static const uint32_t SEND_SIZE = (16000 / 10) * 2; // 0.1s, 16bits to 8bits
-	if (microphone->audio_buffer.size() >= SEND_SIZE) {
-		PackedByteArray to_send;
-		to_send.resize(SEND_SIZE);
-		microphone->audio_buffer.read(to_send.ptrw(), SEND_SIZE);
+	PackedByteArray to_send;
+	to_send.resize(SEND_SIZE);
+	if(microphone->try_read(to_send.ptrw(), SEND_SIZE)) {
 		target_character->send_audio(to_send);
 	}
 }
