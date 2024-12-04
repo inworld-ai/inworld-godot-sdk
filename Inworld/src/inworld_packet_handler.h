@@ -23,6 +23,7 @@ public:
 	virtual void Visit(const Inworld::EmotionEvent &Event) override;
 	virtual void Visit(const Inworld::CustomEvent &Event) override;
 	virtual void Visit(const Inworld::ControlEvent &Event) override;
+	virtual void Visit(const Inworld::ControlEventCurrentSceneStatus &Event) override;
 };
 
 } // namespace godot

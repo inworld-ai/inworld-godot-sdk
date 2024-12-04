@@ -1,6 +1,8 @@
 #ifndef INWORLD_SESSION_H
 #define INWORLD_SESSION_H
 
+#include "inworld_event.h"
+
 #include "Client.h"
 #include "Types.h"
 
@@ -46,6 +48,7 @@ private:
 	String scene_name;
 	String auth;
 
+	bool started;
 	bool connected;
 	bool established;
 
@@ -53,11 +56,11 @@ public:
 	InworldSession();
 	virtual ~InworldSession();
 
-	virtual void _process(double_t delta) override;
-
 public:
 	void start();
 	void stop();
+
+	void on_event_scene_status(Ref<InworldEventSceneStatus> p_event_scene_status);
 
 	ConnectionState get_connection_state() const;
 	bool get_connected() const;

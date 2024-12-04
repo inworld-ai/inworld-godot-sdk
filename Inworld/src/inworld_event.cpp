@@ -210,3 +210,32 @@ InworldEventControl::~InworldEventControl() {
 StringName InworldEventControl::get_type() const {
 	return type;
 }
+
+void InworldEventSceneStatus::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_name"), &InworldEventSceneStatus::get_name);
+	ClassDB::bind_method(D_METHOD("get_description"), &InworldEventSceneStatus::get_description);
+	ClassDB::bind_method(D_METHOD("get_display_name"), &InworldEventSceneStatus::get_display_name);
+
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "", "get_name");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "description"), "", "get_description");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "display_name"), "", "get_display_name");
+}
+
+InworldEventSceneStatus::InworldEventSceneStatus() :
+		InworldEvent{}, name{ "Unknown" }, description{ "Unknown" }, display_name{ "Unknown" }, agent_infos{} {
+}
+
+InworldEventSceneStatus::~InworldEventSceneStatus() {
+}
+
+String InworldEventSceneStatus::get_name() const {
+	return name;
+}
+
+String InworldEventSceneStatus::get_description() const {
+	return description;
+}
+
+String InworldEventSceneStatus::get_display_name() const {
+	return display_name;
+}

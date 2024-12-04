@@ -39,6 +39,8 @@ void InworldSession::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("start"), &InworldSession::start);
 	ClassDB::bind_method(D_METHOD("stop"), &InworldSession::stop);
 
+	ClassDB::bind_method(D_METHOD("on_event_scene_status", "scene_status"), &InworldSession::on_event_scene_status);
+
 	ClassDB::bind_method(D_METHOD("get_connection_state"), &InworldSession::get_connection_state);
 	ADD_SIGNAL(MethodInfo("connection_state_changed", PropertyInfo(Variant::INT, "connection_state")));
 
@@ -61,7 +63,7 @@ void InworldSession::_bind_methods() {
 }
 
 InworldSession::InworldSession() :
-		Node{}, player{ nullptr }, project_name{}, workspace_name{}, scene_type{}, scene_name{}, auth{}, established{ false }, connected{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
+		Node{}, player{ nullptr }, project_name{}, workspace_name{}, scene_type{}, scene_name{}, auth{}, started{false}, established{ false }, connected{ false }, client{}, packet_handler{ nullptr }, agent_info_map{} {
 	Inworld::SdkInfo sdk_info{
 		"godot",
 		std::string(((String)Engine::get_singleton()->get_version_info()["string"]).utf8()),
@@ -69,18 +71,18 @@ InworldSession::InworldSession() :
 		std::string(OS::get_singleton()->get_name().utf8()),
 	};
 
-	client.InitClient(
+	client.InitClientAsync(
 			sdk_info,
 			[this](Inworld::Client::ConnectionState p_connection_state) {
 				const InworldSession::ConnectionState connection_state = (InworldSession::ConnectionState)p_connection_state;
-				set_process(connection_state != ConnectionState::IDLE);
+				call_deferred("set_process", connection_state != ConnectionState::IDLE);
 
-				emit_signal("connection_state_changed", connection_state);
+				call_deferred("emit_signal", "connection_state_changed", connection_state);
 
 				const bool new_connected = connection_state == ConnectionState::CONNECTED;
 				if (connected != new_connected) {
 					connected = new_connected;
-					emit_signal("connected", connected);
+					call_deferred("emit_signal", "connected", connected);
 				}
 
 				if (connection_state == ConnectionState::DISCONNECTED) {
@@ -99,69 +101,45 @@ InworldSession::~InworldSession() {
 	client.DestroyClient();
 }
 
-void InworldSession::_process(double_t delta) {
-	Node::_process(delta);
-	client.Update();
-}
-
 void InworldSession::start() {
 	packet_handler = memnew(InworldPacketHandler);
+	packet_handler->add_user_signal("scene_status");
+	packet_handler->connect("scene_status", Callable(this, "on_event_scene_status"));
 
 	Inworld::ClientOptions client_options;
 
 	client_options.ServerUrl = "api-engine.inworld.ai:443";
-
-	client_options.ProjectName = project_name.utf8().get_data();
-	client_options.PlayerName = player == nullptr ? "Player" : player->get_given_name().utf8().get_data();
-
-	std::unordered_map<SceneType, String> scene_type_to_name = {{SceneType::SCENE, "scenes"}, {SceneType::SINGLE_CHARACTER, "characters"}};
-
-	client_options.SceneName = String(String("workspaces/") + workspace_name + String("/") + scene_type_to_name[scene_type] + String("/") + scene_name).utf8().get_data();
+	client_options.Resource = String(String("workspaces/") + workspace_name).utf8().get_data();
 	client_options.Base64 = auth.utf8().get_data();
 
-	client_options.Capabilities.Text = true;
+	client_options.ProjectName = project_name.utf8().get_data();
+	client_options.UserConfig.Name = player == nullptr ? "Player" : player->get_given_name().utf8().get_data();
+
 	client_options.Capabilities.Audio = true;
 	client_options.Capabilities.Emotions = true;
 	client_options.Capabilities.Interruptions = true;
-	client_options.Capabilities.Triggers = true;
 	client_options.Capabilities.EmotionStreaming = true;
 	client_options.Capabilities.PhonemeInfo = true;
-	client_options.Capabilities.LoadSceneInSession = true;
 
-	client.StartClient(
-			client_options, {},
-			[this](const std::vector<Inworld::AgentInfo> &p_agent_infos) {
-				for (const Inworld::AgentInfo &agent_info : p_agent_infos) {
-					std::string brain_name = agent_info.BrainName.substr(agent_info.BrainName.rfind("/") + 1, agent_info.BrainName.size());
-					agent_info_map[brain_name] = agent_info;
+	client.SetOptions(client_options);
 
-					const String signal_prefix = String(agent_info.AgentId.c_str());
+	client.InitSpeechProcessor(Inworld::ClientSpeechOptions_Default{});
+	
+	std::unordered_map<SceneType, String> scene_type_to_name = {{SceneType::SCENE, "scenes"}, {SceneType::SINGLE_CHARACTER, "characters"}};
 
-#define DEFINE_USER_SIGNAL(Type)                                                                                            \
-	{                                                                                                                       \
-		Dictionary signal_param;                                                                                            \
-		signal_param["name"] = #Type;                                                                                       \
-		signal_param["type"] = Variant::OBJECT;                                                                             \
-		packet_handler->add_user_signal(signal_prefix + String("_") + String(#Type), TypedArray<Dictionary>(signal_param)); \
-	}
-
-					DEFINE_USER_SIGNAL(text);
-					DEFINE_USER_SIGNAL(audio);
-					DEFINE_USER_SIGNAL(emotion);
-					DEFINE_USER_SIGNAL(trigger);
-					DEFINE_USER_SIGNAL(control);
-
-#undef DEFINE_USER_SIGNAL
-				}
-
-				established = true;
-				emit_signal("established", established);
-			});
+	started = true;
+	client.StartClientFromSceneId(String(String("workspaces/") + workspace_name + String("/") + scene_type_to_name[scene_type] + String("/") + scene_name).utf8().get_data());
 }
 
 void InworldSession::stop() {
+	if (!started) {
+		return;
+	}
+
 	established = false;
 	emit_signal("established", established);
+
+	client.DestroySpeechProcessor();
 
 	client.StopClient();
 
@@ -171,6 +149,34 @@ void InworldSession::stop() {
 	}
 
 	agent_info_map = {};
+}
+
+void InworldSession::on_event_scene_status(Ref<InworldEventSceneStatus> p_event_scene_status) {
+for (const Inworld::AgentInfo &agent_info : p_event_scene_status->agent_infos) {
+	std::string brain_name = agent_info.BrainName.substr(agent_info.BrainName.rfind("/") + 1, agent_info.BrainName.size());
+	agent_info_map[brain_name] = agent_info;
+
+	const String signal_prefix = String(agent_info.AgentId.c_str());
+
+#define DEFINE_USER_SIGNAL(Type)                                                                                            \
+	{                                                                                                                       \
+		Dictionary signal_param;                                                                                            \
+		signal_param["name"] = #Type;                                                                                       \
+		signal_param["type"] = Variant::OBJECT;                                                                             \
+		packet_handler->add_user_signal(signal_prefix + String("_") + String(#Type), TypedArray<Dictionary>(signal_param)); \
+	}
+
+		DEFINE_USER_SIGNAL(text);
+		DEFINE_USER_SIGNAL(audio);
+		DEFINE_USER_SIGNAL(emotion);
+		DEFINE_USER_SIGNAL(trigger);
+		DEFINE_USER_SIGNAL(control);
+
+#undef DEFINE_USER_SIGNAL
+	}
+
+	established = true;
+	emit_signal("established", established);
 }
 
 InworldSession::ConnectionState InworldSession::get_connection_state() const {
@@ -217,7 +223,7 @@ void InworldSession::start_audio_session(String p_brain) {
 	if (!agent.has_value()) {
 		return;
 	}
-	client.StartAudioSession(agent.value().AgentId);
+	client.StartAudioSession(agent.value().AgentId, {});
 }
 
 void InworldSession::stop_audio_session(String p_brain) {
