@@ -26,6 +26,12 @@ struct InworldEventPacketId {
 	String interaction_id;
 };
 
+struct InworldAgentInfo {
+	String brain_name;
+	String agent_id;
+	String given_name;
+};
+
 class InworldEvent : public RefCounted {
 	GDCLASS(InworldEvent, RefCounted)
 
@@ -162,6 +168,26 @@ public:
 	StringName type;
 
 	StringName get_type() const;
+};
+
+class InworldEventSceneStatus : public InworldEvent {
+	GDCLASS(InworldEventSceneStatus, InworldEvent)
+
+protected:
+	static void _bind_methods();
+
+public:
+	InworldEventSceneStatus();
+	virtual ~InworldEventSceneStatus();
+
+	String name;
+	String description;
+	String display_name;
+	std::vector<Inworld::AgentInfo> agent_infos;
+
+	String get_name() const;
+	String get_description() const;
+	String get_display_name() const;
 };
 
 } // namespace godot

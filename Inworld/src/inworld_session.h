@@ -14,6 +14,7 @@
 namespace godot {
 class InworldPacketHandler;
 class InworldPlayer;
+class InworldEventSceneStatus;
 
 class InworldSession : public Node {
 	GDCLASS(InworldSession, Node);
@@ -46,6 +47,7 @@ private:
 	String scene_name;
 	String auth;
 
+	bool started;
 	bool connected;
 	bool established;
 
@@ -53,11 +55,11 @@ public:
 	InworldSession();
 	virtual ~InworldSession();
 
-	virtual void _process(double_t delta) override;
-
 public:
 	void start();
 	void stop();
+
+	void on_event_scene_status(Ref<InworldEventSceneStatus> p_event_scene_status);
 
 	ConnectionState get_connection_state() const;
 	bool get_connected() const;

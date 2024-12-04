@@ -20,22 +20,18 @@
 
 using namespace godot;
 
-auto LogCallback = [](const char *msg, int severity) {
-	switch (severity) {
-		case 0:
-			UtilityFunctions::print(String(msg));
-			break;
-		case 1:
-			// UtilityFunctions::printwarn(String(msg)); - missing warn function?
-			UtilityFunctions::push_warning(String(msg), __FUNCTION__, __FILE__, __LINE__);
-			break;
-		case 2:
-			UtilityFunctions::printerr(String(msg));
-			UtilityFunctions::push_error(String(msg), __FUNCTION__, __FILE__, __LINE__);
-			break;
-		default:
-			break;
-	}
+auto LogInfoCallback = [](const char *msg) {
+	UtilityFunctions::print(String(msg));
+};
+
+auto LogWarnCallback = [](const char *msg) {
+	// UtilityFunctions::printwarn(String(msg)); - missing warn function?
+	UtilityFunctions::push_warning(String(msg), __FUNCTION__, __FILE__, __LINE__);
+};
+
+auto LogErrorCallback = [](const char *msg) {
+	UtilityFunctions::printerr(String(msg));
+	UtilityFunctions::push_error(String(msg), __FUNCTION__, __FILE__, __LINE__);
 };
 
 void initialize_inworld_module(ModuleInitializationLevel p_level) {
@@ -58,6 +54,7 @@ void initialize_inworld_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_class<InworldEventEmotion>();
 	ClassDB::register_class<InworldEventTrigger>();
 	ClassDB::register_class<InworldEventControl>();
+	ClassDB::register_class<InworldEventSceneStatus>();
 
 	ClassDB::register_abstract_class<InworldMessage>();
 	ClassDB::register_class<InworldMessageTalk>();
@@ -69,7 +66,7 @@ void initialize_inworld_module(ModuleInitializationLevel p_level) {
 
 	ClassDB::register_class<InworldTalkQueue>();
 
-	Inworld::LogSetLoggerCallback(LogCallback);
+	Inworld::SetLogCallbacks(LogInfoCallback, LogWarnCallback, LogErrorCallback);
 }
 
 void uninitialize_inworld_module(ModuleInitializationLevel p_level) {
@@ -77,7 +74,7 @@ void uninitialize_inworld_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	Inworld::LogClearLoggerCallback();
+	Inworld::ClearLogCallbacks();
 }
 
 extern "C" {
