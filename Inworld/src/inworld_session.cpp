@@ -68,7 +68,7 @@ InworldSession::InworldSession() :
 	Inworld::SdkInfo sdk_info{
 		"godot",
 		std::string(((String)Engine::get_singleton()->get_version_info()["string"]).utf8()),
-		"0.1.0",
+		"0.2.0",
 		std::string(OS::get_singleton()->get_name().utf8()),
 	};
 
