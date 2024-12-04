@@ -1,5 +1,6 @@
 #include "inworld_session.h"
 
+#include "inworld_event.h"
 #include "inworld_packet_handler.h"
 #include "inworld_player.h"
 

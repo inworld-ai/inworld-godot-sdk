@@ -1,8 +1,6 @@
 #ifndef INWORLD_SESSION_H
 #define INWORLD_SESSION_H
 
-#include "inworld_event.h"
-
 #include "Client.h"
 #include "Types.h"
 
@@ -16,6 +14,7 @@
 namespace godot {
 class InworldPacketHandler;
 class InworldPlayer;
+class InworldEventSceneStatus;
 
 class InworldSession : public Node {
 	GDCLASS(InworldSession, Node);
