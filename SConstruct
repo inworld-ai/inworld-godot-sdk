@@ -73,7 +73,8 @@ if env["platform"] == "macos":
     env.Append(LIBPATH=["Inworld/inworld-ndk/lib/Mac"])
     env.Append(
         LIBS=[
-            "libInworldNDK.a",
+            "libInworld-ndk.a",
+            "libInworld-ndk-proto.a",
             "libabsl_bad_optional_access.a",
             "libabsl_base.a",
             "libabsl_cord.a",
