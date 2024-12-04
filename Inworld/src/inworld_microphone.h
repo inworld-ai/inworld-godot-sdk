@@ -22,18 +22,14 @@ public:
 	void set_hot(bool p_hot);
 	bool get_hot() const;
 
-	struct AudioBuffer {
-	public:
-		uint32_t size() const;
-		void read(uint8_t *p_out, uint32_t p_size);
-		void write(uint8_t *p_in, uint32_t p_size);
+	bool try_read(uint8_t *p_out, uint32_t p_size);
 
-	private:
-		Mutex mutex;
-		PackedByteArray buffer;
-	} audio_buffer;
+	friend void _on_recv_write(InworldMicrophone *microphone, uint8_t* p_input, uint32_t size);
+private:
+	void write(uint8_t *p_in, uint32_t p_size);
 
 private:
+	PackedByteArray buffer;
 	ma_device *capture_device;
 };
 
