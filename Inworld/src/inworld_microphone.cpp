@@ -9,12 +9,10 @@
 using namespace godot;
 
 void _on_recv_audio(ma_device *p_device, void *p_output, const void *p_input, ma_uint32 p_frame_count) {
-	InworldMicrophone *microphone = (InworldMicrophone *)p_device->pUserData;
-	_on_recv_write(microphone, (uint8_t *)p_input, (uint32_t)p_frame_count * 2);
-}
-
-void ::_on_recv_write(InworldMicrophone *microphone, uint8_t* p_input, uint32_t size) {
-	microphone->write(p_input, size);
+	PackedByteArray *buffer = (PackedByteArray *)p_device->pUserData;
+	uint32_t prev_size = buffer->size();
+	buffer->resize(buffer->size() + (uint32_t)p_frame_count * 2);
+	memcpy(buffer->ptrw() + prev_size, (uint8_t *)p_input, (uint32_t)p_frame_count * 2);
 }
 
 void InworldMicrophone::_bind_methods() {
@@ -32,7 +30,7 @@ InworldMicrophone::InworldMicrophone() :
 	device_config.capture.channels = 1;
 	device_config.sampleRate = 16000;
 	device_config.dataCallback = _on_recv_audio;
-	device_config.pUserData = this;
+	device_config.pUserData = &buffer;
 
 	if (ma_device_init(NULL, &device_config, capture_device) != MA_SUCCESS) {
 		UtilityFunctions::push_warning(String("Failed to init audio capture device!"), __FUNCTION__, __FILE__, __LINE__);
@@ -68,10 +66,4 @@ bool InworldMicrophone::try_read(uint8_t *p_out, uint32_t p_size) {
 		return true;
 	}
 	return false;
-}
-
-void InworldMicrophone::write(uint8_t *p_in, uint32_t p_size) {
-	uint32_t prev_size = buffer.size();
-	buffer.resize(buffer.size() + p_size);
-	memcpy(buffer.ptrw() + prev_size, p_in, p_size);
 }
